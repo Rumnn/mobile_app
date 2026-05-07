@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-surface-variant": "#cbc3d7",
+                "on-tertiary-container": "#002f38",
+                "on-error": "#690005",
+                "on-tertiary-fixed": "#001f26",
+                "error-container": "#93000a",
+                "secondary-container": "#aa0266",
+                "secondary": "#ffb0cd",
+                "tertiary-container": "#009eb9",
+                "surface-dim": "#0f0b3c",
+                "inverse-on-surface": "#2d2a5b",
+                "primary-fixed": "#e9ddff",
+                "surface-container-lowest": "#0a0538",
+                "surface-container-low": "#181445",
+                "background": "#0f0b3c",
+                "surface-bright": "#363364",
+                "surface-container": "#1c1949",
+                "secondary-fixed-dim": "#ffb0cd",
+                "primary-container": "#a078ff",
+                "secondary-fixed": "#ffd9e4",
+                "tertiary-fixed-dim": "#4cd7f6",
+                "on-tertiary-fixed-variant": "#004e5c",
+                "on-secondary": "#640039",
+                "on-secondary-container": "#ffbad3",
+                "on-primary-container": "#340080",
+                "surface": "#0f0b3c",
+                "tertiary": "#4cd7f6",
+                "on-tertiary": "#003640",
+                "on-secondary-fixed": "#3e0022",
+                "on-background": "#e3dfff",
+                "outline-variant": "#494454",
+                "outline": "#958ea0",
+                "on-surface": "#e3dfff",
+                "on-primary-fixed-variant": "#5516be",
+                "surface-container-high": "#262454",
+                "on-error-container": "#ffdad6",
+                "inverse-primary": "#6d3bd7",
+                "surface-container-highest": "#312f5f",
+                "on-secondary-fixed-variant": "#8c0053",
+                "tertiary-fixed": "#acedff",
+                "surface-tint": "#d0bcff",
+                "primary": "#d0bcff",
+                "inverse-surface": "#e3dfff",
+                "error": "#ffb4ab",
+                "primary-fixed-dim": "#d0bcff",
+                "on-primary": "#3c0091",
+                "on-primary-fixed": "#23005c",
+                "surface-variant": "#312f5f"
+            },
+            "borderRadius": {
+                "DEFAULT": "1rem",
+                "lg": "2rem",
+                "xl": "3rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "base": "4px",
+                "lg": "24px",
+                "md": "16px",
+                "margin": "20px",
+                "xl": "32px",
+                "sm": "12px",
+                "xs": "8px",
+                "gutter": "16px"
+            },
+            "fontFamily": {
+                "body-md": ["Plus Jakarta Sans"],
+                "display-lg": ["Plus Jakarta Sans"],
+                "body-lg": ["Plus Jakarta Sans"],
+                "headline-lg": ["Plus Jakarta Sans"],
+                "label-lg": ["Plus Jakarta Sans"],
+                "headline-md": ["Plus Jakarta Sans"],
+                "label-sm": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                "display-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                "label-sm": ["10px", {"lineHeight": "12px", "letterSpacing": "0.08em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0f0b3c;
+            color: #e3dfff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glow-pink {
+            box-shadow: 0 0 20px rgba(255, 176, 205, 0.3);
+        }
+        .glow-purple {
+            box-shadow: 0 0 20px rgba(208, 188, 255, 0.3);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-background/80 dark:bg-background/80 backdrop-blur-xl border-b border-white/10 shadow-[0_0_20px_rgba(208,188,255,0.3)] flex justify-between items-center px-margin h-16">
+<div class="flex items-center gap-xs">
+<span class="font-display-lg text-display-lg bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">NebulaPlay</span>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-xs bg-surface-container-high px-md py-xs rounded-full border border-white/10 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<span class="font-label-lg text-label-lg text-on-surface">500 Coins</span>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-primary overflow-hidden hover:scale-105 transition-transform">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A close-up portrait of a stylish young gamer with neon pink hair and futuristic cyberpunk glasses. The background is a soft-focus digital nebula with deep purple and electric blue tones. High-end digital photography style with cinematic lighting and a slight glowing aura around the head." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMwBRNIsPQ8V0ao8ulsAA14ZKSgk8_s8cfgCfRXmKbgnFrG1KJJSvEkoH4DW2eSQYdv0ZDFf-eRpwAF1XOhvWzYNp1u6j8jHtI7o4rKaujdfLsHcwcOVOOWoJkffIAVHhCh4ogxVUycyIyxvYfqKYKyAZZUZRWiNHoH5c1VMdXO2x9yX6z0A-LfOaPkW0fNc3MrY2xa37BJIRsvQoZDdf03iqwzQQFUzrisE5U6j8D4oiYMtLjCjdrCfjFRfJusS-gii0g8zLpERgc"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="pt-24 px-margin max-w-5xl mx-auto space-y-lg">
+<!-- Profile Hero Section -->
+<section class="glass-card rounded-lg p-lg relative overflow-hidden flex flex-col md:flex-row items-center md:items-end gap-lg">
+<div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-primary/20 to-secondary/20 blur-2xl"></div>
+<div class="relative group">
+<div class="w-32 h-32 md:w-40 md:h-40 rounded-full border-[3px] border-secondary glow-pink overflow-hidden">
+<img alt="Large Avatar" class="w-full h-full object-cover" data-alt="A high-resolution, vibrant avatar of a young digital artist wearing a neon-lined streetwear hoodie. The lighting is dominated by pink and purple spotlights, creating a vaporwave aesthetic. The character has a confident expression and is set against a dark, minimalist digital void with floating crystalline particles." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDjWCI2oT_W5q_SQbxGmsjTDT3VoGkM9xKdmos_V3HJy0d_LFgXl5FhQcNF0baVUuuLBokueea3UNogEWDDrlgYFdXLEDz2q5GgnGIhnvMaCMOEbfHcy9xIgXQn-TIlpmLGSy9QYcEBgfeSPQ6HhcPgTIS3kaLjG55qREzRMY_ReKS1nYs3xmwGQp3ttBO8pRl7qN5iOFtT-X9-Q7kpWmRprMsNuSk7IIVdcEGexhmkzrRvNPloMpX7or6A0CP4ZDGCEYXVPAlsjyo"/>
+</div>
+<div class="absolute bottom-1 right-1 bg-green-500 w-6 h-6 rounded-full border-4 border-surface-container-high"></div>
+</div>
+<div class="flex-1 text-center md:text-left space-y-xs">
+<div class="flex flex-col md:flex-row items-center gap-xs">
+<h1 class="font-headline-lg text-display-lg text-on-surface">Gamer777</h1>
+<span class="bg-primary/20 text-primary border border-primary/30 px-md py-1 rounded-full font-label-sm text-label-sm">LEVEL 42 MAGE</span>
+</div>
+<p class="font-body-md text-on-surface-variant max-w-md">Chasing high scores and digital dreams. Vaporwave enthusiast and legendary spellcaster.</p>
+<div class="flex gap-md pt-md justify-center md:justify-start">
+<div class="text-center">
+<span class="block font-headline-md text-primary">1.2k</span>
+<span class="font-label-sm text-on-surface-variant uppercase">Following</span>
+</div>
+<div class="text-center border-x border-white/10 px-md">
+<span class="block font-headline-md text-secondary">8.4k</span>
+<span class="font-label-sm text-on-surface-variant uppercase">Followers</span>
+</div>
+<div class="text-center">
+<span class="block font-headline-md text-tertiary">450</span>
+<span class="font-label-sm text-on-surface-variant uppercase">Wins</span>
+</div>
+</div>
+</div>
+<button class="bg-gradient-to-r from-primary to-secondary text-on-primary font-label-lg px-xl py-md rounded-full glow-pink hover:scale-105 active:scale-95 transition-all">
+                Chỉnh sửa hồ sơ
+            </button>
+</section>
+<!-- Bento Grid for Achievements and Gifts -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<!-- Achievements Section (Bento Large) -->
+<section class="md:col-span-2 glass-card rounded-lg p-md space-y-md">
+<div class="flex justify-between items-center">
+<h2 class="font-headline-md text-on-surface">Thành tích</h2>
+<span class="material-symbols-outlined text-primary">military_tech</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-md">
+<!-- Achievement Card 1 -->
+<div class="bg-surface-container-low rounded-md p-md border border-white/5 hover:bg-white/5 transition-colors group">
+<div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center mb-xs group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</div>
+<h3 class="font-label-lg text-on-surface">Top 10 Thách Đấu</h3>
+<p class="font-label-sm text-on-surface-variant">Mùa hè 2023</p>
+</div>
+<!-- Achievement Card 2 -->
+<div class="bg-surface-container-low rounded-md p-md border border-white/5 hover:bg-white/5 transition-colors group">
+<div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-xs group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<h3 class="font-label-lg text-on-surface">Thợ Săn Quà</h3>
+<p class="font-label-sm text-on-surface-variant">Thu thập 100+ quà</p>
+</div>
+<!-- Achievement Card 3 -->
+<div class="bg-surface-container-low rounded-md p-md border border-white/5 hover:bg-white/5 transition-colors group">
+<div class="w-12 h-12 bg-tertiary/10 rounded-full flex items-center justify-center mb-xs group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<h3 class="font-label-lg text-on-surface">Siêu Tốc Độ</h3>
+<p class="font-label-sm text-on-surface-variant">Hoàn thành 50 game</p>
+</div>
+</div>
+</section>
+<!-- Mini Collection (Bento Small) -->
+<section class="glass-card rounded-lg p-md space-y-md">
+<div class="flex justify-between items-center">
+<h2 class="font-headline-md text-on-surface">Bộ sưu tập</h2>
+<span class="material-symbols-outlined text-secondary">featured_play_list</span>
+</div>
+<div class="grid grid-cols-3 gap-xs">
+<div class="aspect-square rounded-sm bg-surface-container-highest flex items-center justify-center border border-white/5">
+<img alt="Gift 1" class="w-8 h-8" data-alt="A 3D rendered virtual gift icon of a glowing blue crystal heart. The heart is encased in a transparent glass sphere with floating magical sparkles. The lighting is high-energy, neon blue, and purple, fitting a premium gaming app aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBI23uMmbML6ktOfnYEIyIRziHyiPm7ZdbL9jkKYeJ4yQC-2gvNTcTijl80CkqPc4XvRLEaljyqIoNybtZ6RiByaz9tv-UzvVuTlaGK31HtOS1J7pCGXTNtC71BySD9bd2uXH8D-9i4UHlxyCEDZnelAo7bXgm3Tcw7k34uU11TFnbs_pNJuMl9OSXPBNSR80ctDYAiaEzcL1_Q0dVEVgPs3pJl7LhHNXngrozhDy7jPQ5s7a38UzV_vJt-N98AG8nEExAFeL2rCEiU"/>
+</div>
+<div class="aspect-square rounded-sm bg-surface-container-highest flex items-center justify-center border border-white/5">
+<img alt="Gift 2" class="w-8 h-8" data-alt="A 3D rendered digital asset of a golden crown with neon pink glowing gems. The crown floats in a dark space, illuminated by vibrant vaporwave lighting. The style is playful, high-detail, and designed for a virtual gift collection in a social game." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6IUvXS4uGcgjqdf3oX8TrtThw5SI41MwVuDWZ5WzuoPF6h8QXiVed134IdwjHzMtr4tBJL3E_uLDhk6J-SbMVBIDW6qWXdgOcqcPcJ_zpH6da4RlwDBWxzRECLRHouxZjZbAcp5FYH06QeMwo9j7e7AG-hgdAsCN1xlfjm605N3aaHDAVsL1jSO2v6lT2E7rA_8NcExGgNMiJctDr0mYvweJ6Ul0xN4E1JD0fkjuNe6468xYhpETdTmYKnIkZ7FUC7PBh6r0ouFNZ"/>
+</div>
+<div class="aspect-square rounded-sm bg-surface-container-highest flex items-center justify-center border border-white/5">
+<img alt="Gift 3" class="w-8 h-8" data-alt="A stylized 3D rocket ship icon, glowing with electric orange and deep purple flames. The rocket is sleek and futuristic, designed as a digital achievement badge. High-saturation colors and soft ambient glows define its presence against a dark UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjHzU66YP3DmIjMDU2iRBjUmRboiRasjOIW_Zs2ECjYHxMz7UwNUBaMRKb8M9sINVdWs7QECAwQ6cCnPIA-M0TWDhhUOUz6xmit_ea7YRmB9MUSr-j2Y9050A20jq4YHyGA_8tE6zaSOHwpu8ivVjK8z7bUGFudP76taF9xupoTyOCIqCjZ7yxL7UfbSD6tlNsDahMYeoyWPQPqmd1VZFjDlPrLEX-VQ2zSDKwQzOUXXyArXziAgEjudhwlXfxBjimHDxP6ad6fujD"/>
+</div>
+<div class="aspect-square rounded-sm bg-surface-container-highest flex items-center justify-center border border-white/5">
+<span class="text-on-surface-variant text-label-sm">+12</span>
+</div>
+</div>
+<button class="w-full py-xs border-2 border-secondary/30 text-secondary rounded-full font-label-lg hover:bg-secondary/10 transition-colors">Xem tất cả</button>
+</section>
+</div>
+<!-- Friends List Section -->
+<section class="glass-card rounded-lg p-md space-y-md">
+<div class="flex justify-between items-center">
+<h2 class="font-headline-md text-on-surface">Bạn bè trực tuyến</h2>
+<div class="flex items-center gap-xs text-on-surface-variant font-label-lg">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+<span>24 Đang chơi</span>
+</div>
+</div>
+<div class="flex gap-md overflow-x-auto pb-md no-scrollbar">
+<!-- Friend 1 -->
+<div class="flex flex-col items-center gap-xs flex-shrink-0 group cursor-pointer">
+<div class="w-16 h-16 rounded-full border-[3px] border-tertiary p-1 group-hover:scale-110 transition-transform">
+<img alt="Friend 1" class="w-full h-full rounded-full object-cover" data-alt="A portrait of a cheerful young woman with blue-tinted hair and trendy glasses. She is posed in a brightly lit digital studio with soft neon purple accents. The image has a clean, high-quality social media profile aesthetic for a Gen Z gaming platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfUKRKqNKjSCnHzauAFaDcbrLF2JYACb8dt-VwAQ9S3bfoEjuC613hF5fc6-knG67ET_3j6CESDj_cxYutOZDAG2B74p-zgCFqIdTYyXq8g87QFE7ExieQxeSyBGHtSjCbd4oqo7vEKO9jEsiCdN_X8GKk1D0BdeeiSu3RA9-RebvMAZELl9hf_RCvQB9mP4GUMfgBZshr5IUuKD6D4HFUIFPIzBYG2jJmUcmkFJDSP2kXXBwPO4f4xrE7TtAjwcn-5LHrODVNzUUF"/>
+</div>
+<span class="font-label-sm text-on-surface">CyberLuna</span>
+<span class="font-label-sm text-green-400 text-[8px] uppercase">Đang chơi</span>
+</div>
+<!-- Friend 2 -->
+<div class="flex flex-col items-center gap-xs flex-shrink-0 group cursor-pointer">
+<div class="w-16 h-16 rounded-full border-[3px] border-primary p-1 group-hover:scale-110 transition-transform">
+<img alt="Friend 2" class="w-full h-full rounded-full object-cover" data-alt="A portrait of a male gamer with a cool, relaxed expression wearing a futuristic headset. The background is filled with glowing tech patterns in a dark purple and pink theme. High-end digital art style with sharp details and atmospheric lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8BTmKKqgxeeaAlYV5PCBIXVikC4ZOrJJiCS1fvOsT50wMaipb2CSClRktozbwC1qzZjUuyJ-8tNqv6lLCpWCvwAFjPATC132RBmECbj6Cy0xD_GDck_5t2T_ww4qR9eTzXQNeZv3DSPa2n2obJW5_X3AHfxAZ__9vgcU-BGmL7OWidP9apIn6bvmaUXBnkAKUC4pvqMTHVb9D1fvc1R8TCD9jt_7SliJMWX9ja9oPF4cJmgkYd6I4kN03A0tVgo6rHKOwOtb7TyU-"/>
+</div>
+<span class="font-label-sm text-on-surface">PixelPanda</span>
+<span class="font-label-sm text-green-400 text-[8px] uppercase">Đang chơi</span>
+</div>
+<!-- Friend 3 -->
+<div class="flex flex-col items-center gap-xs flex-shrink-0 group cursor-pointer opacity-70">
+<div class="w-16 h-16 rounded-full border-[3px] border-on-surface-variant p-1 group-hover:scale-110 transition-transform">
+<img alt="Friend 3" class="w-full h-full rounded-full object-cover" data-alt="A digital portrait of a gamer girl with neon green highlights in her hair, wearing a stylish dark jacket. The lighting is low-key with sharp cyan and purple highlights. The mood is modern, edgy, and fits perfectly within a luxury digital ecosystem." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwtYJ38ik54r_nsGW522mjb-AtaVpB_rN7mR7qDtXBwVj1rQ06wn_JAxqcnCbtM70TtKN1kc8axgq8lmdvyBHAN8wgKyqzmByZWiLYVv5i_lETt0Dm_IByvBjIuFYGzaa-Oixz7HBOg6k9njhAFzO4pc0bGXa37gkdxulVcZ0SCrT5BPKqecjusxjV3e5r5wt_B9DRWYcGrk2v6-Xx-NIN7SYZx3DRYqb4w-CFz0QhdB4OMhPoJ8lxhrGX7gRpOx59ZY_ZY6_7PowQ"/>
+</div>
+<span class="font-label-sm text-on-surface">NeonShadow</span>
+<span class="font-label-sm text-on-surface-variant text-[8px] uppercase">Ngoại tuyến</span>
+</div>
+<!-- Add Friend Slot -->
+<div class="flex flex-col items-center gap-xs flex-shrink-0">
+<button class="w-16 h-16 rounded-full border-2 border-dashed border-outline-variant flex items-center justify-center hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-outline">person_add</span>
+</button>
+<span class="font-label-sm text-on-surface-variant">Thêm bạn</span>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface-container/90 dark:bg-surface-container/90 backdrop-blur-2xl rounded-t-lg border-t border-white/5 shadow-[0_-4px_20px_rgba(0,0,0,0.4)] flex justify-around items-center h-20 px-gutter pb-safe">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">sports_esports</span>
+<span class="font-label-lg text-label-lg">Games</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="font-label-lg text-label-lg">Social</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">forum</span>
+<span class="font-label-lg text-label-lg">Message</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary bg-secondary-container/20 rounded-xl px-4 py-1 shadow-[0_0_15px_rgba(255,176,205,0.4)] active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person_pin</span>
+<span class="font-label-lg text-label-lg">Profile</span>
+</a>
+</nav>
+</body></html>

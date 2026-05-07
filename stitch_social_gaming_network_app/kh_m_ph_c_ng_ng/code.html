@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f0b3c;
+            color: #e3dfff;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(28, 25, 73, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .neon-glow-pink {
+            box-shadow: 0 0 15px rgba(255, 176, 205, 0.3);
+        }
+        .neon-glow-purple {
+            box-shadow: 0 0 20px rgba(208, 188, 255, 0.3);
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface-variant": "#cbc3d7",
+                    "on-tertiary-container": "#002f38",
+                    "on-error": "#690005",
+                    "on-tertiary-fixed": "#001f26",
+                    "error-container": "#93000a",
+                    "secondary-container": "#aa0266",
+                    "secondary": "#ffb0cd",
+                    "tertiary-container": "#009eb9",
+                    "surface-dim": "#0f0b3c",
+                    "inverse-on-surface": "#2d2a5b",
+                    "primary-fixed": "#e9ddff",
+                    "surface-container-lowest": "#0a0538",
+                    "surface-container-low": "#181445",
+                    "background": "#0f0b3c",
+                    "surface-bright": "#363364",
+                    "surface-container": "#1c1949",
+                    "secondary-fixed-dim": "#ffb0cd",
+                    "primary-container": "#a078ff",
+                    "secondary-fixed": "#ffd9e4",
+                    "tertiary-fixed-dim": "#4cd7f6",
+                    "on-tertiary-fixed-variant": "#004e5c",
+                    "on-secondary": "#640039",
+                    "on-secondary-container": "#ffbad3",
+                    "on-primary-container": "#340080",
+                    "surface": "#0f0b3c",
+                    "tertiary": "#4cd7f6",
+                    "on-tertiary": "#003640",
+                    "on-secondary-fixed": "#3e0022",
+                    "on-background": "#e3dfff",
+                    "outline-variant": "#494454",
+                    "outline": "#958ea0",
+                    "on-surface": "#e3dfff",
+                    "on-primary-fixed-variant": "#5516be",
+                    "surface-container-high": "#262454",
+                    "on-error-container": "#ffdad6",
+                    "inverse-primary": "#6d3bd7",
+                    "surface-container-highest": "#312f5f",
+                    "on-secondary-fixed-variant": "#8c0053",
+                    "tertiary-fixed": "#acedff",
+                    "surface-tint": "#d0bcff",
+                    "primary": "#d0bcff",
+                    "inverse-surface": "#e3dfff",
+                    "error": "#ffb4ab",
+                    "primary-fixed-dim": "#d0bcff",
+                    "on-primary": "#3c0091",
+                    "on-primary-fixed": "#23005c",
+                    "surface-variant": "#312f5f"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "4px",
+                    "lg": "24px",
+                    "md": "16px",
+                    "margin": "20px",
+                    "xl": "32px",
+                    "sm": "12px",
+                    "xs": "8px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "body-md": ["Plus Jakarta Sans"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "label-lg": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "label-sm": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "display-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                    "label-sm": ["10px", {"lineHeight": "12px", "letterSpacing": "0.08em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface">
+<!-- Top AppBar -->
+<header class="fixed top-0 w-full z-50 bg-background/80 dark:bg-background/80 backdrop-blur-xl border-b border-white/10 shadow-[0_0_20px_rgba(208,188,255,0.3)] flex justify-between items-center px-margin h-16">
+<div class="flex items-center gap-xs">
+<span class="font-display-lg text-display-lg bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">NebulaPlay</span>
+</div>
+<div class="flex items-center gap-md">
+<div class="bg-surface-container-high px-sm py-xs rounded-full border border-white/5 flex items-center gap-xs">
+<span class="material-symbols-outlined text-secondary text-[18px]">monetization_on</span>
+<span class="font-label-lg text-label-lg text-primary">500 Coins</span>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-primary p-[2px] active:scale-95 transition-all">
+<img alt="User Profile Avatar" class="w-full h-full rounded-full object-cover" data-alt="A detailed digital illustration of a futuristic gamer profile avatar. The character wears sleek neon-lit headphones and a high-tech visor reflecting a vibrant virtual world. The color palette is dominated by deep purples, electric blues, and hot pink accents, creating a high-energy vaporwave aesthetic consistent with a premium gaming social platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEHrWYvPSblN4A2ApLujdcXm7c8waqx9TEFC29JHIJXjzHEKsNsd44yy_kxa5R-WodSy5ZEW9dZnYhhJYbx3HXsrv_LqWU6Rf8po6UUNdBmfH3lwcXeHuZYT1_1VrDQM91Qt723n_0oId4z0f9EByym3etDexm-hpHYtH3ACe0MOJSdzfiK43gGOOp9NrfBVtLugh6QkWb6AJnDS6RrzO7C4E1OTFF9o8KeHsqmz5UqYSyj9S2a7B2vg5aAiVAVrmMYPu77i0Kef2W"/>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-margin max-w-2xl mx-auto space-y-lg">
+<!-- Post Composer -->
+<section class="glass-card rounded-lg p-md space-y-md">
+<div class="flex gap-md">
+<div class="w-12 h-12 rounded-full border-2 border-secondary flex-shrink-0">
+<img alt="Gamer Avatar" class="w-full h-full rounded-full" data-alt="A close-up portrait of a stylized digital avatar with vibrant pink hair and glowing cybernetic features. The background is a soft blur of neon city lights. The character has an expressive, friendly look, designed for a modern social media platform for young gamers. High-quality digital art style with soft glow effects." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6MsKQCloI19FKCCkT0d5tPiiH675F1u8lUsGTdO29HnHv35M3PpByA-uVcqyWNMydtqTlUSxkwBDWcxp7cYukrMyISa9JsB5dslFDbIxTAWyKe-84VHuO6Q0q7Ng70-iewmc0N1VFjc5Um113hbZS4GZjH6yE5i_wxivbeCLC1IkZCsxrcg5SMrnP5207oCe8IW1ZgbNU64zIWzh88wLLe6m-2aqgEwnwPLE9E4YHAijAbjsP_H3P7BEaGU_sfqKHzpsKSk3JF9IR"/>
+</div>
+<div class="flex-1">
+<textarea class="w-full bg-surface-container-lowest border-none focus:ring-2 focus:ring-primary rounded-md font-body-md text-on-surface-variant placeholder:text-outline p-md resize-none h-24" placeholder="Bạn đang nghĩ gì, Mage?"></textarea>
+</div>
+</div>
+<div class="flex justify-between items-center">
+<div class="flex gap-sm">
+<button class="p-xs hover:bg-white/5 rounded-full transition-colors flex items-center gap-xs text-secondary">
+<span class="material-symbols-outlined">image</span>
+<span class="font-label-lg">Ảnh</span>
+</button>
+<button class="p-xs hover:bg-white/5 rounded-full transition-colors flex items-center gap-xs text-tertiary">
+<span class="material-symbols-outlined">videocam</span>
+<span class="font-label-lg">Video</span>
+</button>
+</div>
+<button class="bg-gradient-to-r from-primary-container to-secondary-container text-on-primary-container font-headline-md text-headline-md px-lg py-xs rounded-full hover:scale-105 active:scale-95 transition-all shadow-[0_0_15px_rgba(160,120,255,0.4)]">
+                    Đăng
+                </button>
+</div>
+</section>
+<!-- Social Feed Post 1 -->
+<article class="glass-card rounded-lg overflow-hidden border border-white/10 shadow-xl transition-transform hover:scale-[1.01]">
+<div class="p-md flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full border-2 border-primary-container p-[2px]">
+<img alt="NeoVibe Avatar" class="w-full h-full rounded-full" data-alt="A vibrant digital avatar of a young gamer known as NeoVibe, featuring glowing blue eyes and a sleek headset. The art style is polished 3D with neon lighting accents of cyan and purple. The character's expression is one of excitement and focus, set against a dark, tech-inspired background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDL2_VJSXl9X8fbiLS-Ko9R_VMG-M8uBUWFq3fMQifMz55obJ9eekSSqUscHxdqS-9M11QOnQCIAQAc5JuOiPRAqAqapO8K_RfFshHIu6ciZZ_A5fK-rhMoMWpx2xb8MKOC3tDEewpu1oICLCiGOfEqJxFYASaBpZGiUDP-5rlmKB8KT2XOKvIDMmARCuW30ppgbkaoMXC7I58eecDzk8bOOIVbG-QHAzK0RHFOV62jFFmyasyH05WDuKm8NUfi-y1VM-DvDBLnY6NW"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">NeoVibe</h3>
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Đã đăng 2 giờ trước</p>
+</div>
+</div>
+<button class="flex items-center gap-xs px-md py-xs border-2 border-secondary text-secondary rounded-full font-label-lg hover:bg-secondary/10 transition-colors">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+                    Theo dõi
+                </button>
+</div>
+<div class="px-md pb-md">
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-md leading-relaxed">
+                    Vừa đạt được Pentakill trong trận đấu Nebula Play tối nay! Cảm giác thật bùng nổ 🚀 Ai muốn party tối mai không?
+                </p>
+<div class="relative aspect-video rounded-xl overflow-hidden mb-md group">
+<img class="w-full h-full object-cover" data-alt="A cinematic screenshot of an intense high-fantasy esports battle. Vibrant purple and pink magical effects explode across the screen as a powerful mage character unleashes an ultimate ability. The scene is filled with dynamic light, glowing particle effects, and high-contrast digital colors, reflecting a peak gaming achievement moment in a futuristic arena." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRthsxjlqEvbqvHY2mN5sd3BEKsMBYIokKnhM0wGsChTy3uRChzFyHMKKXl2Hf44SbaFRUedMvoJIbJSdy0dzkRSHHQGWmhHbE4UGhWSQTKwyLtIIccIcniTL_tvinzc-Tzztcr7tUNoiGcyzrZ8bjpzIG6XK0yGGNb4wiVxVeSyfGqOo8V_EMM8NuQbwfBEcUoeBWe348lp4JYAl9TgvcDrqBizY8NqYqN0TzzsbtnuMs30JhAvVR6mRmqebgR9MpP7L6VfwR1Isk"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-md">
+<span class="font-label-lg text-white">Trận đấu: Nebula Arena • Chế độ Xếp hạng</span>
+</div>
+</div>
+<!-- Interaction Bar -->
+<div class="flex items-center gap-lg border-t border-white/5 pt-md">
+<button class="flex items-center gap-xs text-secondary group">
+<span class="material-symbols-outlined group-hover:scale-125 transition-transform" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="font-label-lg">1.2k</span>
+</button>
+<button class="flex items-center gap-xs text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">forum</span>
+<span class="font-label-lg">45</span>
+</button>
+<button class="flex items-center gap-xs text-on-surface-variant hover:text-tertiary transition-colors">
+<span class="material-symbols-outlined">share</span>
+<span class="font-label-lg">Chia sẻ</span>
+</button>
+</div>
+</div>
+<!-- Comment Section (Preview) -->
+<div class="bg-surface-container-low/50 p-md space-y-md">
+<div class="flex gap-md">
+<div class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container font-bold text-[10px]">LD</div>
+<div class="flex-1 bg-surface-container-high rounded-lg p-sm">
+<div class="flex justify-between">
+<span class="font-label-lg text-tertiary">LunarDust</span>
+<span class="text-[10px] text-outline">10 phút trước</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">Kỹ năng đỉnh cao quá bạn ơi! Add mình nhé: LunarDust#999</p>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="w-8 h-8 rounded-full border border-white/10">
+<img alt="My Profile" class="rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAv-Zw0ZoUWaX9FwCq2xtAmIJ40jOk76Uk_dqSkct3E66PAEqrkvMgU3Ye0RLRKIab77Q90EtshN6hjKwVGsDGRhRgpnoMHm5eAdLKorOtrqi_NwDbu-w1tUPga9lA7tQ5wYGkvzMyu57oeqzXDDpt243lOtnW6v-jD_ES2fEa0M72nHYtvKX6QzzX-4EESOhA_96I0QyBIzL-3zgvvj-TaQYInmdEgGGV0kPxeX0cxz9hfZ6b4PDpWZqsCk4SHGkXBrZbxJmUBlcC6"/>
+</div>
+<input class="flex-1 bg-surface-container-lowest border-none focus:ring-1 focus:ring-secondary rounded-full py-xs px-md text-body-md font-body-md placeholder:text-outline" placeholder="Viết bình luận..." type="text"/>
+</div>
+</div>
+</article>
+<!-- Social Feed Post 2 (Short Update) -->
+<article class="glass-card rounded-lg p-md border border-white/10 space-y-md relative overflow-hidden">
+<!-- Subtle background glow -->
+<div class="absolute -top-10 -right-10 w-40 h-40 bg-secondary/10 blur-[80px] rounded-full"></div>
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-full border-2 border-tertiary p-[2px]">
+<img alt="VoidRunner Avatar" class="w-full h-full rounded-full" data-alt="A cyber-ninja themed digital avatar with a glowing mask and sharp, neon-green accents. The character is set in a dark, atmospheric environment with digital rain in the background. High-detail digital illustration with a focus on metallic textures and sharp lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzmNPexFw-YWKFHN7A4_d7gQXYHGi3tw-5vv0q8_21CPv_hsdg6mH3x0pY7LLWYcHud8SimiFD2h8_Jvg2TfWX8x9MT0DYDLXO0BDOPKZtrPiWFKU3_c-ubc-g-cHfONJEfrordzeGi-VzbUO08s4FJXmPHYaQOtlErOHWgrOXDgPWlQ2iUZhBnmRWveuqG1k3EB8srR5pw4jGRvGBB5WObXvbkQXCey_yD5fo_SCVFUhFwBgXjacifQLoxofuCPTICgt93WW3iXh6"/>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">VoidRunner</h3>
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Vừa cập nhật</p>
+</div>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+                Đang tìm đồng đội leo rank Bạch Kim tối nay. Cần 1 Support và 1 Tanker. Anh em nào rảnh hú mình nha! 🎮🔥 #LFG #NebulaRank
+            </p>
+<div class="flex gap-xs flex-wrap">
+<span class="bg-primary-container/20 text-primary border border-primary/20 px-sm py-1 rounded-full font-label-sm">#GamingLife</span>
+<span class="bg-secondary-container/20 text-secondary border border-secondary/20 px-sm py-1 rounded-full font-label-sm">#Recruitment</span>
+</div>
+<div class="flex items-center gap-lg border-t border-white/5 pt-md">
+<button class="flex items-center gap-xs text-on-surface-variant hover:text-secondary transition-colors">
+<span class="material-symbols-outlined">favorite</span>
+<span class="font-label-lg">89</span>
+</button>
+<button class="flex items-center gap-xs text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">forum</span>
+<span class="font-label-lg">12</span>
+</button>
+</div>
+</article>
+</main>
+<!-- Navigation Bar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-lg bg-surface-container/90 dark:bg-surface-container/90 backdrop-blur-2xl border-t border-white/5 shadow-[0_-4px_20px_rgba(0,0,0,0.4)] flex justify-around items-center h-20 px-gutter pb-safe">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined">sports_esports</span>
+<span class="font-label-lg text-label-lg">Games</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary bg-secondary-container/20 rounded-xl px-4 py-1 shadow-[0_0_15px_rgba(255,176,205,0.4)] active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined">explore</span>
+<span class="font-label-lg text-label-lg">Social</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined">forum</span>
+<span class="font-label-lg text-label-lg">Message</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined">person_pin</span>
+<span class="font-label-lg text-label-lg">Profile</span>
+</button>
+</nav>
+<!-- Floating Action Button - Only on appropriate screens (e.g., Feed) -->
+<button class="fixed bottom-24 right-margin w-14 h-14 bg-gradient-to-br from-primary to-secondary text-on-primary-container rounded-full shadow-[0_8px_25px_rgba(208,188,255,0.5)] flex items-center justify-center hover:scale-110 active:scale-90 transition-all z-40">
+<span class="material-symbols-outlined text-[32px]">edit</span>
+</button>
+</body></html>

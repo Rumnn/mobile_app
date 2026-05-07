@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-surface-variant": "#cbc3d7",
+                "on-tertiary-container": "#002f38",
+                "on-error": "#690005",
+                "on-tertiary-fixed": "#001f26",
+                "error-container": "#93000a",
+                "secondary-container": "#aa0266",
+                "secondary": "#ffb0cd",
+                "tertiary-container": "#009eb9",
+                "surface-dim": "#0f0b3c",
+                "inverse-on-surface": "#2d2a5b",
+                "primary-fixed": "#e9ddff",
+                "surface-container-lowest": "#0a0538",
+                "surface-container-low": "#181445",
+                "background": "#0f0b3c",
+                "surface-bright": "#363364",
+                "surface-container": "#1c1949",
+                "secondary-fixed-dim": "#ffb0cd",
+                "primary-container": "#a078ff",
+                "secondary-fixed": "#ffd9e4",
+                "tertiary-fixed-dim": "#4cd7f6",
+                "on-tertiary-fixed-variant": "#004e5c",
+                "on-secondary": "#640039",
+                "on-secondary-container": "#ffbad3",
+                "on-primary-container": "#340080",
+                "surface": "#0f0b3c",
+                "tertiary": "#4cd7f6",
+                "on-tertiary": "#003640",
+                "on-secondary-fixed": "#3e0022",
+                "on-background": "#e3dfff",
+                "outline-variant": "#494454",
+                "outline": "#958ea0",
+                "on-surface": "#e3dfff",
+                "on-primary-fixed-variant": "#5516be",
+                "surface-container-high": "#262454",
+                "on-error-container": "#ffdad6",
+                "inverse-primary": "#6d3bd7",
+                "surface-container-highest": "#312f5f",
+                "on-secondary-fixed-variant": "#8c0053",
+                "tertiary-fixed": "#acedff",
+                "surface-tint": "#d0bcff",
+                "primary": "#d0bcff",
+                "inverse-surface": "#e3dfff",
+                "error": "#ffb4ab",
+                "primary-fixed-dim": "#d0bcff",
+                "on-primary": "#3c0091",
+                "on-primary-fixed": "#23005c",
+                "surface-variant": "#312f5f"
+            },
+            "borderRadius": {
+                "DEFAULT": "1rem",
+                "lg": "2rem",
+                "xl": "3rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "base": "4px",
+                "lg": "24px",
+                "md": "16px",
+                "margin": "20px",
+                "xl": "32px",
+                "sm": "12px",
+                "xs": "8px",
+                "gutter": "16px"
+            },
+            "fontFamily": {
+                "body-md": ["Plus Jakarta Sans"],
+                "display-lg": ["Plus Jakarta Sans"],
+                "body-lg": ["Plus Jakarta Sans"],
+                "headline-lg": ["Plus Jakarta Sans"],
+                "label-lg": ["Plus Jakarta Sans"],
+                "headline-md": ["Plus Jakarta Sans"],
+                "label-sm": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                "display-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                "label-sm": ["10px", {"lineHeight": "12px", "letterSpacing": "0.08em", "fontWeight": "700"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(49, 47, 95, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .neon-glow-pink {
+            box-shadow: 0 0 15px rgba(255, 176, 205, 0.4);
+        }
+        .neon-glow-primary {
+            box-shadow: 0 0 20px rgba(208, 188, 255, 0.3);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-32">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-background/80 dark:bg-background/80 backdrop-blur-xl border-b border-white/10 shadow-[0_0_20px_rgba(208,188,255,0.3)] flex justify-between items-center px-margin h-16">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full border-2 border-primary overflow-hidden hover:scale-105 transition-transform active:scale-95">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCbhICqPnOQaEmpMg3Mp2BbwIQnGSnVU_59wJ-7aR-ev-CBLW-f6fpSeDIc4oOYaxc-YAiS3h9uCvAil8JF4Ldh6Q1xS7e92xZSdblejzbgNUcfYTY-8e5L8j29o8EixUr-6xTFnRAWX91mGkdFmG_Dz6X9baUhFSwqNIRJMeIkc3_9QnO8o8sNSCZKG1-BlvOqDXXnicbldhQ-nTSVWwRUCBjo-pCAOQ7-bRGs1QtQCRb0XCSdf03JtvWXvEYiWDQVJzfbsc4usNl"/>
+</div>
+<span class="font-display-lg text-display-lg bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">NebulaPlay</span>
+</div>
+<div class="flex items-center gap-md">
+<div class="bg-surface-container-high px-sm py-xs rounded-full flex items-center gap-xs border border-white/5 shadow-inner">
+<span class="material-symbols-outlined text-secondary filled-icon text-[18px]">monetization_on</span>
+<span class="text-secondary font-label-lg text-label-lg">500 Coins</span>
+</div>
+<button class="relative hover:scale-105 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-on-surface">notifications</span>
+<span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-error rounded-full"></span>
+</button>
+</div>
+</header>
+<main class="pt-24 px-margin space-y-xl">
+<!-- Hero Featured Banner -->
+<section class="relative h-48 rounded-lg overflow-hidden glass-card group">
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10"></div>
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="A cinematic 3D digital art composition representing an epic space battle with glowing neon purple and pink ships. The lighting is dramatic and saturated, featuring deep space backgrounds and vibrant energy trails that match a gamer aesthetic. Digital dopamine style with crisp, high-definition textures and motion blur effects." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcB9IRvObophT4A88pD0gr8q6UBQMqqfl6Y7mP4JDUGoH617PSXkojHkXP5VYNZuzpVwHX-bHaHrlvDK9hZsoWAfSZOryVG9wbmiGzZcFIRgRl6U7sfP17xKmsI3Fp5FoPLBH7lGnLMXJBX96VjM7Hy7-eIv_JPsNXnEKdrFVgmGbDerS3LvdZAnimtyW-LB-hz3JCJzYqhucALiFjAib5SUq1GJ33Ym8VHJbWQfFSodtZ34kWCqccJ2JYDvpfavngEJMKIVqYRM3l"/>
+<div class="absolute bottom-md left-md z-20 space-y-xs">
+<span class="bg-secondary text-on-secondary px-sm py-xs rounded-full text-label-sm font-label-sm uppercase tracking-widest">Sự kiện mới</span>
+<h2 class="font-headline-lg text-headline-lg text-white">Đại Chiến Ma Sói: Đêm Trăng Máu</h2>
+<p class="text-on-surface-variant text-body-md font-body-md">Tham gia ngay nhận x2 phần thưởng xu!</p>
+</div>
+</section>
+<!-- Featured Games Grid -->
+<section class="space-y-md">
+<div class="flex justify-between items-end">
+<h3 class="font-headline-md text-headline-md text-primary">Trò Chơi Nổi Bật</h3>
+<span class="text-secondary text-label-lg font-label-lg">Xem tất cả</span>
+</div>
+<div class="grid grid-cols-2 gap-gutter">
+<!-- Game 1 -->
+<div class="space-y-xs group">
+<div class="relative aspect-square rounded-xl overflow-hidden glass-card hover:scale-105 transition-all duration-300 shadow-[0_0_15px_rgba(208,188,255,0.1)] group-hover:shadow-[0_0_25px_rgba(208,188,255,0.3)]">
+<img class="w-full h-full object-cover" data-alt="Vibrant digital illustration of a stylized werewolf character lurking in a mysterious moonlit forest. The art style is bold and expressive, using a neon purple and deep indigo color palette with bright pink eye accents. High-energy social gaming atmosphere with professional digital painting textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAf9y0YpplaUrFJ2fPV-jDEudb8N1dra5u9PsJqDeJywbFJ_lOUHo5PLItLae890LtxxkbWePxAK-5ZzvwPOibonIuL6aF9f65aKEP82tSYGWDqILQJ0VLUV7kBXuvin4rmL8ASSFoD0T8SF71CT6dQGgnEellpIjDYKBzdy6iNU2yEll7ZQ41UApllZgUms4OrsibYFp2ZV_o2SDe9VdAkAeWr9spWumq_yzNgb4ozEEFbcBPHovKwhd4vueUT6AfbCZzaVgEnzLP9"/>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+<div class="absolute bottom-0 inset-x-0 p-sm backdrop-blur-md bg-surface-container/60">
+<p class="text-white font-headline-md text-headline-md text-center">Ma Sói</p>
+</div>
+</div>
+</div>
+<!-- Game 2 -->
+<div class="space-y-xs group">
+<div class="relative aspect-square rounded-xl overflow-hidden glass-card hover:scale-105 transition-all duration-300 shadow-[0_0_15px_rgba(255,176,205,0.1)] group-hover:shadow-[0_0_25px_rgba(255,176,205,0.3)]">
+<img class="w-full h-full object-cover" data-alt="Whimsical digital art depicting a neon-glowing paintbrush creating floating artistic splashes in a dark vaporwave environment. The lighting features intense pink and cyan glow effects against a deep purple background. The mood is playful, creative, and energetic, perfectly capturing a modern 'Draw and Guess' social game vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtgAfoFjAZsFUWsd3rorB-dYPpgtOeH-6UEhHu8fk8sh4V3Iwlwq05ZRUzJqPe8so2JEZ33eCkQEd8X_YHgFJHexf5gCGNNiK6Z3bVsZuaxH-HjzHvwWVrZW1we4NL03QbVeq6aT9wUaY0EILncRm6nBhsO4jKZx2gqBp_n4dKCDnys33QUIQ9P_M4JWwHrDcD5xVf1M6Fb-PjfxEgpd7OpjRJUlavJJJXrdtoi52eS1HwYkUkvnxsfKVFL6b7g3f89WuOzdtySiWQ"/>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+<div class="absolute bottom-0 inset-x-0 p-sm backdrop-blur-md bg-surface-container/60">
+<p class="text-white font-headline-md text-headline-md text-center">Vẽ và Đoán</p>
+</div>
+</div>
+</div>
+<!-- Game 3 -->
+<div class="space-y-xs group">
+<div class="relative aspect-square rounded-xl overflow-hidden glass-card hover:scale-105 transition-all duration-300 shadow-[0_0_15px_rgba(76,215,246,0.1)] group-hover:shadow-[0_0_25px_rgba(76,215,246,0.3)]">
+<img class="w-full h-full object-cover" data-alt="Stylized neon music notes and sound waves floating in a futuristic digital club setting. The color scheme is dominated by electric blue, neon cyan, and magenta highlights. Glossy surfaces and glassmorphic icons create a sense of depth and high-energy rhythm, suggesting a fast-paced music or dance social game." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcQLRmNLjy2GXM0J7B-4x_71nPbZv8WScV0A12-WNJwEaiVZzGYUs22_5nE6TKLHi_1BFdv2Zss6l-Y-ZiHKyl1NZf9pAXU2n-8ei6JtbEFW58Cro2kZjkFPdih_vQgCEKkcPD22kw5OSGL_ge7ThyN-L6Xv45tTItk0KPOqP6zo2ImPh61NJWXxKarcuBHwynv95Xe-_CSA0GHhz9Kw2IVhCQykGy5EHzHTv7SxAdIjLVFabKQHwgmLQG2NnSrH4ZsENy_8rcm9c9"/>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+<div class="absolute bottom-0 inset-x-0 p-sm backdrop-blur-md bg-surface-container/60">
+<p class="text-white font-headline-md text-headline-md text-center">Đấu Nhạc</p>
+</div>
+</div>
+</div>
+<!-- Game 4 -->
+<div class="space-y-xs group">
+<div class="relative aspect-square rounded-xl overflow-hidden glass-card hover:scale-105 transition-all duration-300 shadow-[0_0_15px_rgba(208,188,255,0.1)] group-hover:shadow-[0_0_25px_rgba(208,188,255,0.3)]">
+<img class="w-full h-full object-cover" data-alt="Close-up of futuristic neon-lit playing cards and gaming dice floating in a zero-gravity environment. Deep purple ambient lighting with sharp pink edges on the objects. The scene is rendered with high-fidelity glass textures and glowing particles, evoking a sense of sophisticated digital play and strategy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWOa-sj-OAESagl1mRf-C0J5R2Rf0J9choJymedAYtvtaulDJMXx3gs989fLnYmzzLlMfF2HjdhqzhKvuUj3TSwMj_lXjI74vEVdeJCVkHlBSgY4y9ReyQIkg88nB50mDtO-1Olp92lYV_igYq09lrX67avkzFVaLuVO2z5Q36HIKWDDJimbaP42jl4M0M09V5hiYiIxDPsH2dF6hESMi8WRI2Xq9Mc9JGjcxV-ZK1-f4zgLX73rEknIRwAwwF7n8uLq6wOjPRxZmE"/>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+<div class="absolute bottom-0 inset-x-0 p-sm backdrop-blur-md bg-surface-container/60">
+<p class="text-white font-headline-md text-headline-md text-center">Uno Online</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Active Chat Rooms -->
+<section class="space-y-md">
+<div class="flex justify-between items-end">
+<h3 class="font-headline-md text-headline-md text-primary">Phòng Trò Chuyện</h3>
+<div class="flex items-center gap-xs text-tertiary">
+<span class="w-2 h-2 bg-tertiary rounded-full animate-pulse"></span>
+<span class="text-label-lg font-label-lg">1.2k Đang Online</span>
+</div>
+</div>
+<div class="space-y-md">
+<!-- Room 1 -->
+<div class="glass-card p-md rounded-lg flex items-center justify-between hover:bg-white/5 active:scale-95 transition-all duration-200 cursor-pointer">
+<div class="flex items-center gap-md">
+<div class="relative">
+<div class="w-14 h-14 rounded-full p-[2px] bg-gradient-to-tr from-primary to-secondary">
+<img alt="Room Avatar" class="w-full h-full rounded-full object-cover bg-surface-container-highest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPS3EneTC1ifIJaQVEgFuRgmzVKz5NXXfB1owOcjg3-NcnL0dUtQGTak85XB4_KtS6Ay9JYXp4uki3hgCmby39H0SPcD1LKk6pkq81VdgKAecY0Doz9JdakXfxQ0KYst9RrPi2J4-DlJx2qigkgsa0vUEZI5qaPt2onqWPpGJHCB8a_UNoPMsc17gcDBUorbz_RYSIQ8MSkFPqfWdCfdGOZbqIn-s4wPQIJXRGs70SG_x30C2JH8QK4fx4KpxKHxvlC_iDXOBBll5Q"/>
+</div>
+<span class="absolute -bottom-1 -right-1 bg-tertiary w-4 h-4 rounded-full border-2 border-surface-container"></span>
+</div>
+<div>
+<h4 class="text-on-surface font-headline-md text-headline-md">Hội Những Người Độc Thân</h4>
+<div class="flex items-center gap-xs">
+<div class="flex -space-x-2">
+<img class="w-5 h-5 rounded-full border border-surface-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAK27csJRbW9tclCjZarNCuuQs3P8Tut0hTuUJtN9FApUjSawHU2sP5cqtKCKe1tdZHiv5pj1ufwmJ7hI7zWxwsWY2-pvDNEIR6KbzCmoVQWGTbziFz2cv_x4IXiFvRShHwh1CFgpEAF6aA-cZYj6HKMV-tT4NaZ1s-i8AST6BhHZQiLSnL7xk_CenFxMmlAxmOANWw97CeisM15VL3QFfwV3TCTuDgwVeZZBvq0mzhOW8mOLeOk7z-IZJNbF3sBYHu6e6xbkUGQ17r"/>
+<img class="w-5 h-5 rounded-full border border-surface-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBebwerQKjccIku7FZOFCoZNdU2vnu200tyRYMNahPj85rvdhoOjSx5183kc0iVUzyOi3zVnWaU-DNFxz6ZCkjTMo_vtqE27k2egjMgLAIGndc-i8ImyR6y5mvvB7IRM0Oc_stXa5SzfzTgkrHryAmompOEIVp9I9vPVuWs3aEdrPNqvVkq2WK7osHJbbwdDGP5cGd9Ihqe4okYh_Vgilaxdq940vAqlDSjmDHpbu_dYCP3vc5XGB9JpYT7FnIgAFoAdiTZGEXw6kXa"/>
+<img class="w-5 h-5 rounded-full border border-surface-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWbbSEPMT0NGXlNP3H-ZzKR1rOIoFrn6V5Vf7Yvo4nd15wriKT89Mdm2l4Dq0iW99Gv3sBJ73jkNnKt608krcC09msWL5hPHmwyKLAzW8sNAg1MZauaE2bfiUaoW5e_uH35N_J7zfd-4UceBAeXgJstL-QsvkeSMGSazYhFnUrlIip6pVvMoPxtGMpFC5OeizgQZs4uJBadfnYAJNQTq1jG2jecMFUH0kM8tXKGvKgOZ2OsSCTV_D6eGf-goIZmNm0XVhKs4S0AHcN"/>
+</div>
+<span class="text-on-surface-variant font-label-lg text-label-lg">+42 đang hát</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<button class="bg-primary/20 text-primary border border-primary/30 px-md py-xs rounded-full font-label-lg text-label-lg hover:bg-primary/30 transition-colors">Vào Phòng</button>
+</div>
+</div>
+<!-- Room 2 -->
+<div class="glass-card p-md rounded-lg flex items-center justify-between hover:bg-white/5 active:scale-95 transition-all duration-200 cursor-pointer">
+<div class="flex items-center gap-md">
+<div class="relative">
+<div class="w-14 h-14 rounded-full p-[2px] bg-gradient-to-tr from-secondary to-tertiary">
+<img alt="Room Avatar" class="w-full h-full rounded-full object-cover bg-surface-container-highest" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApPJidiRdc9yTM507T5s8U33klq0fRxG5oiZYtihqjyk-10LWOpRrF-mc0vDWhvDj2UewlORvVfAikA_H41S2WR-zkIK7_Tuw_ay6UrCHkQPsmoP8kWEhJb4xY4jUgcwh-TKki3VXz0Bqz4jhuj7JeYCkDFhoq2u1ncUaUXJDEmxGMcxOjaZVxf1pPBS9jFcG-1sUvMNyM8fd6aBDdrLPleRfpPuW1ffh6RfU8T1qCjcTtssZrBeYI1dBCXBz-71FMiw4OGO40IxhE"/>
+</div>
+<span class="absolute -bottom-1 -right-1 bg-tertiary w-4 h-4 rounded-full border-2 border-surface-container"></span>
+</div>
+<div>
+<h4 class="text-on-surface font-headline-md text-headline-md">Tìm Đồng Đội Ma Sói</h4>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-secondary text-[16px] filled-icon">local_fire_department</span>
+<span class="text-on-surface-variant font-label-lg text-label-lg">Sắp bắt đầu • 10/12</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<button class="bg-secondary/20 text-secondary border border-secondary/30 px-md py-xs rounded-full font-label-lg text-label-lg hover:bg-secondary/30 transition-colors">Vào Phòng</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface-container/90 dark:bg-surface-container/90 backdrop-blur-2xl rounded-t-lg border-t border-white/5 shadow-[0_-4px_20px_rgba(0,0,0,0.4)] flex justify-around items-center h-20 px-gutter pb-safe">
+<!-- Active Item: Games -->
+<a class="flex flex-col items-center justify-center text-secondary bg-secondary-container/20 rounded-xl px-4 py-1 shadow-[0_0_15px_rgba(255,176,205,0.4)] active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined filled-icon">sports_esports</span>
+<span class="font-label-lg text-label-lg">Games</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="font-label-lg text-label-lg">Social</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">forum</span>
+<span class="font-label-lg text-label-lg">Message</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">person_pin</span>
+<span class="font-label-lg text-label-lg">Profile</span>
+</a>
+</nav>
+<!-- FAB (Floating Action Button) - Create Room Contextual -->
+<div class="fixed bottom-24 right-margin z-40">
+<button class="w-14 h-14 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(208,188,255,0.5)] hover:scale-110 active:scale-90 transition-all">
+<span class="material-symbols-outlined text-white text-[32px]">add</span>
+</button>
+</div>
+</body></html>

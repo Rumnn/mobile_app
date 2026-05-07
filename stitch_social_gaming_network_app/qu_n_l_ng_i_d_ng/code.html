@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#acedff",
+                    "surface": "#0f0b3c",
+                    "primary-container": "#a078ff",
+                    "on-tertiary-fixed": "#001f26",
+                    "background": "#0f0b3c",
+                    "surface-container-highest": "#312f5f",
+                    "on-tertiary": "#003640",
+                    "on-secondary-fixed": "#3e0022",
+                    "secondary-container": "#aa0266",
+                    "secondary": "#ffb0cd",
+                    "secondary-fixed": "#ffd9e4",
+                    "tertiary-fixed-dim": "#4cd7f6",
+                    "surface-tint": "#d0bcff",
+                    "on-primary-fixed": "#23005c",
+                    "error-container": "#93000a",
+                    "surface-bright": "#363364",
+                    "error": "#ffb4ab",
+                    "inverse-primary": "#6d3bd7",
+                    "outline-variant": "#494454",
+                    "on-primary-container": "#340080",
+                    "on-primary-fixed-variant": "#5516be",
+                    "on-error-container": "#ffdad6",
+                    "surface-container-lowest": "#0a0538",
+                    "on-surface": "#e3dfff",
+                    "on-primary": "#3c0091",
+                    "on-secondary-fixed-variant": "#8c0053",
+                    "primary": "#d0bcff",
+                    "tertiary-container": "#009eb9",
+                    "inverse-on-surface": "#2d2a5b",
+                    "surface-dim": "#0f0b3c",
+                    "inverse-surface": "#e3dfff",
+                    "secondary-fixed-dim": "#ffb0cd",
+                    "on-tertiary-fixed-variant": "#004e5c",
+                    "surface-variant": "#312f5f",
+                    "outline": "#958ea0",
+                    "tertiary": "#4cd7f6",
+                    "on-surface-variant": "#cbc3d7",
+                    "surface-container-high": "#262454",
+                    "primary-fixed-dim": "#d0bcff",
+                    "on-background": "#e3dfff",
+                    "surface-container": "#1c1949",
+                    "on-secondary-container": "#ffbad3",
+                    "primary-fixed": "#e9ddff",
+                    "on-secondary": "#640039"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "12px",
+                    "lg": "24px",
+                    "gutter": "16px",
+                    "base": "4px",
+                    "xs": "8px",
+                    "xl": "32px",
+                    "md": "16px",
+                    "margin": "20px"
+            },
+            "fontFamily": {
+                    "label-lg": ["Plus Jakarta Sans"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "label-sm": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "label-sm": ["10px", {"lineHeight": "12px", "letterSpacing": "0.08em", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-card {
+        background: rgba(28, 25, 73, 0.6);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .neon-glow-pink {
+        box-shadow: 0 0 15px rgba(255, 176, 205, 0.3);
+      }
+      .neon-glow-purple {
+        box-shadow: 0 0 20px rgba(208, 188, 255, 0.3);
+      }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md min-h-screen pb-24">
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 w-full z-50 bg-background/80 dark:bg-background/80 backdrop-blur-xl border-b border-white/10 shadow-[0_0_20px_rgba(208,188,255,0.3)] flex justify-between items-center px-margin h-16">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full border-[3px] border-primary overflow-hidden hover:scale-105 transition-transform active:scale-95">
+<img alt="User Profile Avatar" data-alt="A stylized 3D avatar of a young gamer with neon highlights in their hair, wearing glowing high-tech headphones. The portrait is set against a deep purple and pink vaporwave background with soft digital bokeh. The lighting is dramatic and colorful, echoing a high-energy gaming aesthetic with vibrant cyan and magenta tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxpm9VeN2CLF2iaoa03foV5yEUQSJ05mtSi8wz9A9pA3kC4wezm-PgwzxmZSKFGwrD_dWzJQFwcDF4bdjwuoG5RvFJIG8b8qCSpvL0tcra7iKwOAaMtPEHehlajurIl_fTOqYCXJasS1uhELHKrcKS4q6MFgpxV8WRaLjsVNUIlmD_BZzj6ouScfFea2zpsTTf-WcpMiYlbcOoYFlNc4eUk2qQ4nVj4diiQ59CyRjV7fXrfhqKO_hFui9qfEAwCk24PlOd3wUsoE2C"/>
+</div>
+<h1 class="font-display-lg text-display-lg bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent !text-[24px]">NebulaPlay</h1>
+</div>
+<div class="flex items-center gap-md">
+<div class="bg-secondary-container/20 px-4 py-2 rounded-full border border-secondary/30 flex items-center gap-xs hover:scale-105 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<span class="font-label-lg text-label-lg text-secondary">500 Coins</span>
+</div>
+</div>
+</header>
+<main class="pt-24 px-margin max-w-7xl mx-auto">
+<!-- Dashboard Header & Actions -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-lg mb-xl">
+<div>
+<h2 class="font-display-lg text-display-lg text-on-surface">User Management</h2>
+<p class="text-on-surface-variant font-body-lg text-body-lg">Monitor and manage the NebulaPlay community.</p>
+</div>
+<button class="bg-gradient-to-r from-primary to-primary-container text-on-primary-container px-lg py-md rounded-lg font-headline-md text-headline-md shadow-[0_0_25px_rgba(160,120,255,0.5)] hover:scale-105 active:scale-95 transition-all flex items-center gap-xs">
+<span class="material-symbols-outlined">person_add</span>
+                Add New User
+            </button>
+</div>
+<!-- Search & Filter Section -->
+<div class="glass-card rounded-xl p-lg mb-xl flex flex-col md:flex-row gap-md items-center">
+<div class="relative w-full md:w-96">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-lowest border-2 border-transparent focus:border-primary outline-none rounded-lg py-3 pl-12 pr-4 text-on-surface transition-all" placeholder="Search usernames, IDs..." type="text"/>
+</div>
+<div class="flex gap-sm w-full md:w-auto">
+<button class="glass-card px-md py-3 rounded-lg flex items-center gap-xs text-on-surface hover:bg-white/10 transition-colors flex-1 md:flex-none">
+<span class="material-symbols-outlined">filter_list</span>
+<span class="font-label-lg text-label-lg">Filters</span>
+</button>
+<button class="glass-card px-md py-3 rounded-lg flex items-center gap-xs text-on-surface hover:bg-white/10 transition-colors flex-1 md:flex-none">
+<span class="material-symbols-outlined">download</span>
+<span class="font-label-lg text-label-lg">Export</span>
+</button>
+</div>
+</div>
+<!-- User Data Table (Responsive Layout) -->
+<div class="glass-card rounded-xl overflow-hidden shadow-2xl">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high/50 border-b border-white/10">
+<th class="px-lg py-md font-label-lg text-label-lg text-primary uppercase tracking-wider">ID</th>
+<th class="px-lg py-md font-label-lg text-label-lg text-primary uppercase tracking-wider">User</th>
+<th class="px-lg py-md font-label-lg text-label-lg text-primary uppercase tracking-wider">Level</th>
+<th class="px-lg py-md font-label-lg text-label-lg text-primary uppercase tracking-wider">Status</th>
+<th class="px-lg py-md font-label-lg text-label-lg text-primary uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<!-- User Row 1 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-lg py-lg font-label-lg text-label-lg text-on-surface-variant">#NP-8821</td>
+<td class="px-lg py-lg">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full border-2 border-tertiary overflow-hidden">
+<img alt="CyberPunk" data-alt="A digital portrait of a gamer avatar with glowing cybernetic implants around the eyes. The background is a dense, high-contrast matrix of neon code and glowing data streams in electric blue and deep indigo. The lighting is sharp, creating a professional yet edgy e-sports aesthetic with a cinematic tech-noir mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5XUaSkaIBAf38OzjUOKY6WiXju5r1v0KdoyxZ62cfCvuhcyERDPlIZ6dlQX8jkAqu_F2XzQ5eRoYdFIhZ6UE-TgfPKBx9iEFoTwbgDZwZVM4hnXEyVuijS32bjyS0M7cMeikX9gp81-fpi6-yA47aJSKvKfcyoEshz9eggYl0Fkka4Gahd65KeoIp9CMkkvsct1e4EC3GORDLDOlo-KmIghbTVeXwIlrPx5eyawQGisAgvpDM2kwF0KczGwu7DBpyvC-SX4dZNGws"/>
+</div>
+<div>
+<div class="font-headline-md text-[16px] text-on-surface">CyberPunk_2077</div>
+<div class="text-[12px] text-on-surface-variant">cyber.punk@nebula.io</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-lg">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-tertiary text-[18px]" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="font-body-lg text-body-lg text-on-surface">Level 99</span>
+</div>
+</td>
+<td class="px-lg py-lg">
+<span class="bg-tertiary-container/20 text-tertiary px-3 py-1 rounded-full text-label-sm font-label-sm border border-tertiary/30">ACTIVE</span>
+</td>
+<td class="px-lg py-lg text-right">
+<div class="flex justify-end gap-sm">
+<button class="w-10 h-10 rounded-lg flex items-center justify-center bg-surface-container-highest text-on-surface hover:text-primary transition-all active:scale-90">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="w-10 h-10 rounded-lg flex items-center justify-center bg-surface-container-highest text-on-surface hover:text-primary transition-all active:scale-90">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="w-10 h-10 rounded-lg flex items-center justify-center bg-surface-container-highest text-on-surface hover:text-error transition-all active:scale-90">
+<span class="material-symbols-outlined">block</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- User Row 2 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-lg py-lg font-label-lg text-label-lg text-on-surface-variant">#NP-1245</td>
+<td class="px-lg py-lg">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full border-2 border-secondary overflow-hidden">
+<img alt="NeonQueen" data-alt="A stylized 3D character portrait of a female gamer with bright pink hair and iridescent armor. The background features a soft-focus gaming setup with glowing RGB peripherals in a dark room. The atmosphere is warm and inviting, using a palette of soft pastels and neon pinks to create a high-energy social vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9MnuVTsxQf7c3CvbHAL9uRXGuUUCH_8a7JmHWbdXeQehYdW6R-ej_BbqOx58UXtFxEKhCfuzTIz5GyJXa2eGUgv1-W32pFkYpy0vtgZAbpTJGq9w6jGGyAAqexUYMTTuePkprxC4WB8FFK6YprWe0gpFIh4nP5QwGjI15ooj6dIs-ALnphyFY4TAxFyfYnAP0ZHbcMwpuutxN28FLjXGt8IV16WW2b0QJu3LabLRmLO6kxAdoz82iQ2bcXYzvVi_3UdnBU3En4fZC"/>
+</div>
+<div>
+<div class="font-headline-md text-[16px] text-on-surface">NeonQueen</div>
+<div class="text-[12px] text-on-surface-variant">queen.neon@nebula.io</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-lg">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-tertiary text-[18px]" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="font-body-lg text-body-lg text-on-surface">Level 42</span>
+</div>
+</td>
+<td class="px-lg py-lg">
+<span class="bg-tertiary-container/20 text-tertiary px-3 py-1 rounded-full text-label-sm font-label-sm border border-tertiary/30">ACTIVE</span>
+</td>
+<td class="px-lg py-lg text-right">
+<div class="flex justify-end gap-sm">
+<button class="w-10 h-10 rounded-lg flex items-center justify-center bg-surface-container-highest text-on-surface hover:text-primary transition-all active:scale-90">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="w-10 h-10 rounded-lg flex items-center justify-center bg-surface-container-highest text-on-surface hover:text-primary transition-all active:scale-90">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="w-10 h-10 rounded-lg flex items-center justify-center bg-surface-container-highest text-on-surface hover:text-error transition-all active:scale-90">
+<span class="material-symbols-outlined">block</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- User Row 3 (Banned) -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-lg py-lg font-label-lg text-label-lg text-on-surface-variant">#NP-0043</td>
+<td class="px-lg py-lg">
+<div class="flex items-center gap-md opacity-60">
+<div class="w-10 h-10 rounded-full border-2 border-outline overflow-hidden grayscale">
+<img alt="TrollBot" data-alt="A dark, mysterious avatar silhouette with glitch effects and digital distortion. The background is a monochromatic dark indigo with thin lines of red error code appearing like digital cracks. The mood is heavy and exclusionary, symbolizing a banned or restricted account within a sleek, high-tech interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5q9_9Xd56f4KmaxCHQrNFMei1rns9izM9GHV_dbhclmdClKMQtnz5zUyVgxat_HEkg2LDJzVeBAqN8IJIq8D9TEAmDe9pJUCR3zMbbJh-RupGN6N0etrtOdYEVqUkDkzzPaSGb3lBHm79ccpUqaWfKMU9C_9vp4gAMyqnJPrbL77ZtjDdxPGIR2XmbyUwCasnPvWDM2i-Cds1hlKL6UgOlFEpTcacsrzfoMFVT7wO51gBNtjJasn1m6-IkX3znFdctuA2_ma5FIY2"/>
+</div>
+<div>
+<div class="font-headline-md text-[16px] text-on-surface">ShadowBan_666</div>
+<div class="text-[12px] text-on-surface-variant">shadow@unknown.net</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-lg opacity-60">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-outline text-[18px]" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="font-body-lg text-body-lg text-on-surface">Level 05</span>
+</div>
+</td>
+<td class="px-lg py-lg">
+<span class="bg-error-container/20 text-error px-3 py-1 rounded-full text-label-sm font-label-sm border border-error/30">BANNED</span>
+</td>
+<td class="px-lg py-lg text-right">
+<div class="flex justify-end gap-sm">
+<button class="w-10 h-10 rounded-lg flex items-center justify-center bg-surface-container-highest text-on-surface hover:text-primary transition-all active:scale-90">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="w-10 h-10 rounded-lg flex items-center justify-center bg-surface-container-highest text-on-surface hover:text-primary transition-all active:scale-90">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="w-10 h-10 rounded-lg flex items-center justify-center bg-secondary-container/40 text-secondary transition-all active:scale-90">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lock_open</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-lg py-md bg-surface-container-high/30 flex items-center justify-between border-t border-white/5">
+<span class="font-label-lg text-label-lg text-on-surface-variant">Showing 1 to 3 of 1,240 users</span>
+<div class="flex items-center gap-sm">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center bg-surface-container-highest text-on-surface-variant hover:text-primary transition-all active:scale-90">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center bg-primary-container text-on-primary-container font-label-lg text-label-lg shadow-lg">1</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center bg-surface-container-highest text-on-surface-variant hover:text-primary transition-all active:scale-90 font-label-lg text-label-lg">2</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center bg-surface-container-highest text-on-surface-variant hover:text-primary transition-all active:scale-90 font-label-lg text-label-lg">3</button>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center bg-surface-container-highest text-on-surface-variant hover:text-primary transition-all active:scale-90">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar Shell (Mobile Responsive UI Only) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 rounded-t-lg bg-surface-container/90 dark:bg-surface-container/90 backdrop-blur-2xl border-t border-white/5 shadow-[0_-4px_20px_rgba(0,0,0,0.4)] flex justify-around items-center h-20 px-gutter pb-safe">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined">sports_esports</span>
+<span class="font-label-lg text-label-lg">Games</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined">explore</span>
+<span class="font-label-lg text-label-lg">Social</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined">forum</span>
+<span class="font-label-lg text-label-lg">Message</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary bg-secondary-container/20 rounded-xl px-4 py-1 shadow-[0_0_15px_rgba(255,176,205,0.4)] active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person_pin</span>
+<span class="font-label-lg text-label-lg">Profile</span>
+</button>
+</nav>
+<!-- Sidebar (Desktop View) -->
+<aside class="hidden md:flex fixed left-0 top-16 h-[calc(100vh-64px)] w-64 bg-surface-dim dark:bg-surface-dim shadow-xl flex-col py-lg border-r border-white/5">
+<div class="px-lg mb-lg">
+<div class="flex items-center gap-md p-md bg-white/5 rounded-xl">
+<div class="w-12 h-12 rounded-full border-2 border-primary-container overflow-hidden">
+<img alt="User Profile" data-alt="A close-up 3D avatar of a gamer with vibrant violet hair and a futuristic visor. The background is a glowing purple galaxy with digital stars and nebulae. The lighting is ethereal and high-contrast, designed to make the character pop against a deep space theme, perfect for a high-level mage character." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCm6b2e81PrOq8oEZo0nGoyI3akSJXHTBTqmJnxRMzMomVmHpGTG000n-uFfPnyXVHvvMLNR8wUHav_hmTbXiSV9nv5qmiNqL9ofbldUufwnkZqOhcNBoNMXLVePV-7avvEgkyefC3jvqkFYA9kDJLoqFGX7r0mkejrqrFIyJcrL8pPkkx1yr3Eff1-x0EPmWCgXteIH_BCVwW1ckDzb5Jo8O6896jP3m69iMpu3bCWM-eUNhW9J-EMbaw4PsDHie4z101ANYgidl0R"/>
+</div>
+<div>
+<div class="font-headline-lg text-[16px] text-primary">Gamer777</div>
+<div class="text-[12px] text-on-surface-variant">Level 42 Mage</div>
+<div class="flex items-center gap-xs mt-1">
+<div class="w-2 h-2 rounded-full bg-tertiary shadow-[0_0_8px_#4cd7f6]"></div>
+<span class="text-[10px] text-tertiary uppercase font-bold">Online</span>
+</div>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-base px-sm overflow-y-auto">
+<a class="flex items-center gap-md px-md py-lg text-on-surface-variant hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-tertiary">shopping_bag</span>
+<span class="font-body-lg text-body-lg">Store</span>
+</a>
+<a class="flex items-center gap-md px-md py-lg text-on-surface-variant hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-tertiary">inventory_2</span>
+<span class="font-body-lg text-body-lg">Backpack</span>
+</a>
+<a class="flex items-center gap-md px-md py-lg text-on-surface-variant hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-tertiary">stars</span>
+<span class="font-body-lg text-body-lg">VIP</span>
+</a>
+<div class="h-px bg-white/5 my-md mx-md"></div>
+<a class="flex items-center gap-md px-md py-lg bg-primary-container text-on-primary-container rounded-lg shadow-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-body-lg text-body-lg">Settings</span>
+</a>
+<a class="flex items-center gap-md px-md py-lg text-on-surface-variant hover:bg-white/5 rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:text-tertiary">headset_mic</span>
+<span class="font-body-lg text-body-lg">Support</span>
+</a>
+</nav>
+<div class="px-lg pt-lg border-t border-white/5">
+<button class="w-full py-md flex items-center justify-center gap-xs text-error font-label-lg text-label-lg hover:bg-error/10 rounded-lg transition-colors">
+<span class="material-symbols-outlined">logout</span>
+                Logout
+            </button>
+</div>
+</aside>
+<!-- Content Padding for Sidebar on Desktop -->
+<style>
+        @media (min-width: 768px) {
+            main { margin-left: 256px; }
+        }
+    </style>
+</body></html>

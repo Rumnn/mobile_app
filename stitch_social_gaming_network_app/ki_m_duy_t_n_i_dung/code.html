@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NebulaPlay | Content Moderation</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(28, 25, 73, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .neon-glow-primary {
+            box-shadow: 0 0 15px rgba(208, 188, 255, 0.3);
+        }
+        .neon-glow-secondary {
+            box-shadow: 0 0 15px rgba(255, 176, 205, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 bg-background/80 dark:bg-background/80 backdrop-blur-xl border-b border-white/10 shadow-[0_0_20px_rgba(208,188,255,0.3)] flex justify-between items-center px-margin h-16">
+<div class="flex items-center gap-xs">
+<div class="w-10 h-10 rounded-full border-[3px] border-primary p-0.5">
+<img alt="User Profile Avatar" class="w-full h-full rounded-full object-cover" data-alt="A futuristic, high-detail digital avatar of a young gamer with neon pink hair and cybernetic eyewear, set against a deep purple and cyan blurred background. The style is vaporwave-inspired with soft glowing edges and high-contrast digital lighting, creating a premium and expressive profile identity for a social gaming platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeBdODsCYyVUBNwcRWjCyckeLx12NkrIu2Dn0XoTTDFa8AY46ulEJ_daREbOlA9_hI2OzSIT_KJTYXR6wsQQJuqwQbDaq5yL_VzAi5E9sQjix29akmRLZ6vXBR0N5cBNsT2e7vtdibB3cvIgWGXdKZTsfF5RSp8eiVBU3oJQLozx3gN8DHg2h4jvp69T_YnCcr6B_jsnI2jTYEP6Zs3Eyi5J_aCvAtrlZT7ZuWyAwecBeUeEkfV0NW4bFR1hiznVg_l6VKZ_16pIMx"/>
+</div>
+<span class="font-display-lg text-display-lg bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">NebulaPlay</span>
+</div>
+<div class="flex items-center gap-md">
+<div class="bg-surface-container px-base py-xs rounded-full flex items-center gap-xs border border-white/5 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<span class="font-label-lg text-label-lg text-primary">500 Coins</span>
+</div>
+</div>
+</header>
+<main class="pt-24 px-margin max-w-5xl mx-auto">
+<!-- Moderation Header Section -->
+<div class="mb-xl flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<h1 class="font-display-lg text-display-lg text-primary mb-xs">Safety Hub</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg">Protecting the NebulaPlay community. Review reported content from the Social Feed with high-energy efficiency.</p>
+</div>
+<div class="flex gap-xs">
+<div class="glass-card px-md py-xs rounded-xl flex items-center gap-xs">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Queue Status</span>
+<span class="font-headline-md text-headline-md text-on-surface">12 Pending</span>
+</div>
+</div>
+</div>
+<!-- Moderation Feed: Bento-style Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- Filter Sidebar -->
+<aside class="md:col-span-3 space-y-md">
+<div class="glass-card p-md rounded-lg">
+<h3 class="font-headline-md text-headline-md text-tertiary mb-md">Priority</h3>
+<div class="space-y-xs">
+<button class="w-full text-left p-xs rounded-md bg-primary-container text-on-primary-container font-label-lg text-label-lg flex justify-between items-center">
+<span>High Risk</span>
+<span class="bg-primary px-2 rounded-full text-on-primary">3</span>
+</button>
+<button class="w-full text-left p-xs rounded-md hover:bg-white/5 text-on-surface-variant font-label-lg text-label-lg transition-colors">
+<span>Harassment</span>
+</button>
+<button class="w-full text-left p-xs rounded-md hover:bg-white/5 text-on-surface-variant font-label-lg text-label-lg transition-colors">
+<span>Spam</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Main Feed -->
+<section class="md:col-span-9 space-y-lg">
+<!-- Report Card 1 -->
+<div class="glass-card rounded-lg overflow-hidden border-l-4 border-error neon-glow-secondary">
+<div class="p-md bg-white/5 flex justify-between items-center">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">report</span>
+<span class="font-label-lg text-label-lg text-on-surface">Reported for <span class="text-error">Toxic Behavior</span></span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">2 mins ago</span>
+</div>
+<div class="p-lg grid grid-cols-1 lg:grid-cols-3 gap-lg">
+<!-- Original Content -->
+<div class="lg:col-span-2 space-y-md">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full border-2 border-outline-variant overflow-hidden">
+<img alt="Reported User" class="w-full h-full object-cover" data-alt="A portrait of a digital game character with a defiant expression, wearing futuristic street clothes and metallic accessories. The background is a dark urban alleyway lit by pink neon signs, capturing a gritty but high-tech gamer aesthetic with deep shadows and vibrant glow effects." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMpBV6P_ykUTlLjqdJHA88fLPrGZbIkpfM51Fjer4fBUX8t4sDWClk5bZ-ZkhcKf9B3PrGu5glraukZ0QAXPKNH87MPxzqy738_NLRwy3sYb1MVlfclIqngEWsMMdjJ0vd3IJs9WV7Ss_RYbOShGSwJeGJgrIKbX5ThUEtyVNQvgG36Cl99VZAMw3cAoIPe6wf2qYJV8LoqrXnOAUxHfn0FK2rMp71UQHo9-WMwfdJMGuxCbZzao1K4qcJzIq1_e-CwNVxvsBNysXu"/>
+</div>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface">ShadowBlade_99</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Posted in #RaidLobby</p>
+</div>
+</div>
+<div class="bg-surface-container-low p-md rounded-md border border-white/5">
+<p class="font-body-lg text-body-lg text-on-surface">"You guys are absolute trash. My level 5 mage could play better than this whole team combined. Go back to the lobby and stay there forever."</p>
+</div>
+</div>
+<!-- Actions Sidebar -->
+<div class="flex flex-col gap-sm">
+<button class="w-full py-md rounded-md bg-gradient-to-r from-secondary to-secondary-container text-on-secondary font-headline-md text-headline-md shadow-[0_0_15px_rgba(255,176,205,0.4)] active:scale-95 transition-all">
+                                Delete Post
+                            </button>
+<button class="w-full py-md rounded-md border-2 border-primary text-primary font-headline-md text-headline-md hover:bg-primary/10 active:scale-95 transition-all">
+                                Warn User
+                            </button>
+<button class="w-full py-md rounded-md bg-surface-container text-on-surface-variant font-label-lg text-label-lg hover:text-on-surface transition-colors">
+                                Keep / Ignore
+                            </button>
+</div>
+</div>
+</div>
+<!-- Report Card 2 (Image Content) -->
+<div class="glass-card rounded-lg overflow-hidden border-l-4 border-warning neon-glow-primary">
+<div class="p-md bg-white/5 flex justify-between items-center">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">image</span>
+<span class="font-label-lg text-label-lg text-on-surface">Reported for <span class="text-tertiary">Inappropriate Media</span></span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">15 mins ago</span>
+</div>
+<div class="p-lg grid grid-cols-1 lg:grid-cols-3 gap-lg">
+<div class="lg:col-span-2 space-y-md">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full border-2 border-outline-variant overflow-hidden">
+<img alt="Reported User" class="w-full h-full object-cover" data-alt="A sleek profile icon representing a user with a neon-lit headset. The style is clean and digital, using a purple and cyan color scheme that fits the NebulaPlay branding, with soft ambient occlusion and a high-energy gamer aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCg-pangH_7ae6B_hqkO4DBWPUObIU28vUYNL2RecbDBNdDspCbNjh4TG-EHY7Il-h9oafWhKaXt0GXO1pnUD1kL6NkULBmc171nrkBMVm2RhWroJ4igPoZ0ShjkNcmrIP4-YtwBdiC66wvfVH2nKsHODg33YjfWFi_wek7DX8E17Vh2ovUJvbNla995Z3jHt_lEFPFrmPBpH3f--isaGTy3LRDR4d7Fhtw6IpwO-RfWKWof3iYbrrzpXGnVxiqEGpZ9-rf_oMlaQBK"/>
+</div>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface">NeonViper</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Posted in #CommunityArt</p>
+</div>
+</div>
+<div class="relative w-full aspect-video rounded-xl overflow-hidden group">
+<img class="w-full h-full object-cover filter blur-xl group-hover:blur-0 transition-all duration-500" data-alt="A chaotic digital battle scene from a high-speed video game, featuring explosive neon effects and stylized characters in combat. The image is brightly saturated with electric pinks, purples, and blues, showing high-energy action and detailed particle effects that suggest intense gameplay within a sci-fi universe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7-9Wy1AlT964VS7ehWHrypSP13rkMCPrFGXJq8FabNACvyIi61nNClvyHoWnRy00e7eN6oKEKAGNapNJsxTdotpqcCygQ_fC-4Bmj9cLo8tbGnvoSfHduulYy_otvi2gJrG1uMUvfhCsXBXzXVnIYzMRg8kREQcbKR8OUAPg78vEmOuAneXjaXxi8p8q4xtUYX0-fx672fAUH0FqRRELvN9WSsp_TSle8ldgTrqjp_9PWR6CmMbDM7Its9zV9Nx7boXvkBSiEfmBn"/>
+<div class="absolute inset-0 flex items-center justify-center bg-black/60 group-hover:opacity-0 transition-opacity">
+<p class="font-label-lg text-label-lg text-white bg-error px-md py-xs rounded-full">Hover to Reveal Content</p>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-sm">
+<button class="w-full py-md rounded-md bg-gradient-to-r from-secondary to-secondary-container text-on-secondary font-headline-md text-headline-md shadow-[0_0_15px_rgba(255,176,205,0.4)] active:scale-95 transition-all">
+                                Delete Post
+                            </button>
+<button class="w-full py-md rounded-md border-2 border-primary text-primary font-headline-md text-headline-md hover:bg-primary/10 active:scale-95 transition-all">
+                                Warn User
+                            </button>
+<button class="w-full py-md rounded-md bg-surface-container text-on-surface-variant font-label-lg text-label-lg hover:text-on-surface transition-colors">
+                                Keep / Ignore
+                            </button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface-container/90 dark:bg-surface-container/90 backdrop-blur-2xl border-t border-white/5 shadow-[0_-4px_20px_rgba(0,0,0,0.4)] rounded-t-lg flex justify-around items-center h-20 px-gutter pb-safe">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined text-[28px]" data-icon="sports_esports">sports_esports</span>
+<span class="font-label-lg text-label-lg">Games</span>
+</button>
+<button class="flex flex-col items-center justify-center text-secondary bg-secondary-container/20 rounded-xl px-4 py-1 shadow-[0_0_15px_rgba(255,176,205,0.4)] active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined text-[28px]" data-icon="explore" style="font-variation-settings: 'FILL' 1;">explore</span>
+<span class="font-label-lg text-label-lg">Social</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined text-[28px]" data-icon="forum">forum</span>
+<span class="font-label-lg text-label-lg">Message</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-all duration-200">
+<span class="material-symbols-outlined text-[28px]" data-icon="person_pin">person_pin</span>
+<span class="font-label-lg text-label-lg">Profile</span>
+</button>
+</nav>
+</body></html>

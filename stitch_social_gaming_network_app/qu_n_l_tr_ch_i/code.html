@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NebulaPlay | Game Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f0b3c;
+            color: #e3dfff;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed": "#acedff",
+                      "surface": "#0f0b3c",
+                      "primary-container": "#a078ff",
+                      "on-tertiary-fixed": "#001f26",
+                      "background": "#0f0b3c",
+                      "surface-container-highest": "#312f5f",
+                      "on-tertiary": "#003640",
+                      "on-secondary-fixed": "#3e0022",
+                      "secondary-container": "#aa0266",
+                      "secondary": "#ffb0cd",
+                      "secondary-fixed": "#ffd9e4",
+                      "tertiary-fixed-dim": "#4cd7f6",
+                      "surface-tint": "#d0bcff",
+                      "on-primary-fixed": "#23005c",
+                      "error-container": "#93000a",
+                      "surface-bright": "#363364",
+                      "error": "#ffb4ab",
+                      "inverse-primary": "#6d3bd7",
+                      "outline-variant": "#494454",
+                      "on-primary-container": "#340080",
+                      "on-primary-fixed-variant": "#5516be",
+                      "on-error-container": "#ffdad6",
+                      "surface-container-lowest": "#0a0538",
+                      "on-surface": "#e3dfff",
+                      "on-primary": "#3c0091",
+                      "on-secondary-fixed-variant": "#8c0053",
+                      "primary": "#d0bcff",
+                      "tertiary-container": "#009eb9",
+                      "inverse-on-surface": "#2d2a5b",
+                      "surface-container-low": "#181445",
+                      "on-tertiary-container": "#002f38",
+                      "on-error": "#690005",
+                      "surface-dim": "#0f0b3c",
+                      "inverse-surface": "#e3dfff",
+                      "secondary-fixed-dim": "#ffb0cd",
+                      "on-tertiary-fixed-variant": "#004e5c",
+                      "surface-variant": "#312f5f",
+                      "outline": "#958ea0",
+                      "tertiary": "#4cd7f6",
+                      "on-surface-variant": "#cbc3d7",
+                      "surface-container-high": "#262454",
+                      "primary-fixed-dim": "#d0bcff",
+                      "on-background": "#e3dfff",
+                      "surface-container": "#1c1949",
+                      "on-secondary-container": "#ffbad3",
+                      "primary-fixed": "#e9ddff",
+                      "on-secondary": "#640039"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "sm": "12px",
+                      "lg": "24px",
+                      "gutter": "16px",
+                      "base": "4px",
+                      "xs": "8px",
+                      "xl": "32px",
+                      "md": "16px",
+                      "margin": "20px"
+              },
+              "fontFamily": {
+                      "label-lg": ["Plus Jakarta Sans"],
+                      "display-lg": ["Plus Jakarta Sans"],
+                      "headline-lg": ["Plus Jakarta Sans"],
+                      "body-md": ["Plus Jakarta Sans"],
+                      "body-lg": ["Plus Jakarta Sans"],
+                      "label-sm": ["Plus Jakarta Sans"],
+                      "headline-md": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "label-lg": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "display-lg": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                      "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                      "label-sm": ["10px", {"lineHeight": "12px", "letterSpacing": "0.08em", "fontWeight": "700"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-background/80 dark:bg-background/80 backdrop-blur-xl border-b border-white/10 shadow-[0_0_20px_rgba(208,188,255,0.3)] flex justify-between items-center px-margin h-16">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary font-headline-md text-headline-md">menu</span>
+<h1 class="font-display-lg text-display-lg bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">NebulaPlay</h1>
+</div>
+<div class="flex items-center gap-md">
+<div class="hidden md:flex items-center bg-surface-container-high px-md py-xs rounded-full border border-white/5">
+<span class="material-symbols-outlined text-secondary mr-xs" style="font-variation-settings: 'FILL' 1;">monetization_on</span>
+<span class="font-label-lg text-label-lg text-secondary">500 Coins</span>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-primary overflow-hidden hover:scale-105 transition-transform cursor-pointer">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A high-resolution 3D stylized avatar of a young gamer with neon hair and futuristic goggles. The lighting is dramatic with purple and pink rim light against a dark deep space background. The aesthetic is modern, digital, and high-energy social gaming vibes." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxCLxe_qAHZr5T0GlQTFircHX5mVP6-nAXm7NR6xih811hXVWukkd1Vqh409ZM_e574By_sGjURs4S7sxC_lCCusIXBzlSegCdLTe86sHFB8s8UNJzXCLpN3UQIBPLI-y596IvyWXsn_3eFK2DOhIpYDDNwYW95RlRycvibBB8f_WYX6f6bkWjcIjedZmoLvUbRtdSUhK63cvbrsP2xfUjA0vKiOGXmYiqv1aoTgDkI8qAK7-_tG_hsZo1NIv3pyySkr_lfoaZt9qA"/>
+</div>
+</div>
+</header>
+<main class="pt-24 px-margin max-w-7xl mx-auto">
+<!-- Header Actions -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-md mb-xl">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">Game Management</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Oversee your virtual worlds and player activity.</p>
+</div>
+<button class="flex items-center justify-center gap-xs px-lg py-md bg-gradient-to-r from-primary to-secondary text-on-primary-container rounded-lg font-label-lg text-label-lg shadow-[0_0_20px_rgba(208,188,255,0.4)] hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined">upload</span>
+                Upload New Game
+            </button>
+</div>
+<!-- Dashboard Stats Row -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md mb-xl">
+<div class="glass-card p-lg rounded-lg flex items-center gap-lg">
+<div class="p-md bg-primary-container/20 rounded-xl text-primary">
+<span class="material-symbols-outlined text-3xl">groups</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm uppercase text-on-surface-variant">Live Players</p>
+<p class="font-display-lg text-display-lg">12,402</p>
+</div>
+</div>
+<div class="glass-card p-lg rounded-lg flex items-center gap-lg">
+<div class="p-md bg-secondary-container/20 rounded-xl text-secondary">
+<span class="material-symbols-outlined text-3xl">history</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm uppercase text-on-surface-variant">Rounds Played Today</p>
+<p class="font-display-lg text-display-lg">84.2K</p>
+</div>
+</div>
+<div class="glass-card p-lg rounded-lg flex items-center gap-lg">
+<div class="p-md bg-tertiary-container/20 rounded-xl text-tertiary">
+<span class="material-symbols-outlined text-3xl">account_balance_wallet</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm uppercase text-on-surface-variant">Revenue (24h)</p>
+<p class="font-display-lg text-display-lg">$2,190</p>
+</div>
+</div>
+</div>
+<!-- Game CRUD Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+<!-- Game Card: Werewolf -->
+<div class="glass-card rounded-lg overflow-hidden flex flex-col group hover:border-primary/50 transition-colors shadow-lg">
+<div class="relative h-48 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A dark and moody illustration of a werewolf howling under a bright purple glowing moon in a stylized forest. The scene is saturated with deep violets and vibrant magenta highlights, evoking a high-stakes mystery atmosphere. The art style is polished digital painting for a social gaming app." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgfRi-c4zkDXwMoOGrb6hMr5BLv7PsRaq-VUKgzir1LrBPJQLTcvYdqasmEbt2e8gQ-wpohqlP8XfyFy6DgDDRx3jNNMieSYBZ7jTXPHY8MEr4GhW-fCK61ttlGZQZPG6D3HQlGijw17KZ77i148xEzlXPopBTBCpThTHv53-m17wAhfRFFYfESsbH1DWvwniFs-gvg2oHqbewr4C2Jb0xFWdagMtWM84YZrTUrxv46pEM8_kkR9ovghLbGngHiYVgSJ2rVXdYHQoA"/>
+<div class="absolute top-md right-md bg-surface/80 backdrop-blur-md px-md py-xs rounded-full border border-white/10 flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-green-400"></span>
+<span class="font-label-sm text-label-sm text-on-surface">Active</span>
+</div>
+</div>
+<div class="p-lg flex flex-col flex-grow">
+<h3 class="font-headline-md text-headline-md text-primary mb-xs">Werewolf</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-lg">Social deduction game of deception and mystery.</p>
+<div class="grid grid-cols-2 gap-md mb-lg">
+<div class="bg-surface-container-low p-md rounded-lg border border-white/5">
+<span class="font-label-sm text-label-sm text-on-surface-variant block mb-1 uppercase">Players</span>
+<span class="font-headline-lg text-headline-lg text-secondary">4,210</span>
+</div>
+<div class="bg-surface-container-low p-md rounded-lg border border-white/5">
+<span class="font-label-sm text-label-sm text-on-surface-variant block mb-1 uppercase">Rounds</span>
+<span class="font-headline-lg text-headline-lg text-tertiary">12.5k</span>
+</div>
+</div>
+<div class="mt-auto flex flex-wrap gap-sm">
+<button class="flex-1 flex items-center justify-center gap-xs py-sm border-2 border-primary text-primary rounded-lg font-label-lg text-label-lg hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-sm">settings</span>
+                            Edit
+                        </button>
+<button class="flex-1 flex items-center justify-center gap-xs py-sm border-2 border-secondary text-secondary rounded-lg font-label-lg text-label-lg hover:bg-secondary/10 transition-colors">
+<span class="material-symbols-outlined text-sm">build</span>
+                            Maint.
+                        </button>
+</div>
+</div>
+</div>
+<!-- Game Card: Draw & Guess -->
+<div class="glass-card rounded-lg overflow-hidden flex flex-col group hover:border-primary/50 transition-colors shadow-lg">
+<div class="relative h-48 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A vibrant digital art studio scene featuring colorful abstract paint splashes in neon pink, electric blue, and golden yellow. The background is a clean dark purple surface with glowing digital brushes floating. The mood is creative, energetic, and playful, matching a Gen Z gaming aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXuPtBMe8DNzSVEGZNIgenv6RJRxiHzDK_R_lXWQKd84ymHD49e71JFZpKhuwMa3Ylwm_6xSTaHmis9TLyANvwx79h69t0UZ52hExU1blFJiVwZx5pi1XlXFZQXaGmOh3sCpjo5KfKrMB5nA015jon_yVYa2iYlaCqlr7gC3wsfZxjC1FK0Wc2FdLWQC7f7qTX9LtaeycZNIVH0g8UhNo_XTEdaRCgzVYxigfHi0PdpjexXiKowfxTbXI2YTuIxqSS7RkTeULodwkO"/>
+<div class="absolute top-md right-md bg-surface/80 backdrop-blur-md px-md py-xs rounded-full border border-white/10 flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-yellow-400"></span>
+<span class="font-label-sm text-label-sm text-on-surface">Patching</span>
+</div>
+</div>
+<div class="p-lg flex flex-col flex-grow">
+<h3 class="font-headline-md text-headline-md text-primary mb-xs">Draw &amp; Guess</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-lg">Fast-paced artistic creativity and group fun.</p>
+<div class="grid grid-cols-2 gap-md mb-lg">
+<div class="bg-surface-container-low p-md rounded-lg border border-white/5">
+<span class="font-label-sm text-label-sm text-on-surface-variant block mb-1 uppercase">Players</span>
+<span class="font-headline-lg text-headline-lg text-secondary">3,180</span>
+</div>
+<div class="bg-surface-container-low p-md rounded-lg border border-white/5">
+<span class="font-label-sm text-label-sm text-on-surface-variant block mb-1 uppercase">Rounds</span>
+<span class="font-headline-lg text-headline-lg text-tertiary">9.2k</span>
+</div>
+</div>
+<div class="mt-auto flex flex-wrap gap-sm">
+<button class="flex-1 flex items-center justify-center gap-xs py-sm border-2 border-primary text-primary rounded-lg font-label-lg text-label-lg hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-sm">settings</span>
+                            Edit
+                        </button>
+<button class="flex-1 flex items-center justify-center gap-xs py-sm bg-secondary-container/40 text-secondary rounded-lg font-label-lg text-label-lg border-2 border-secondary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">pause</span>
+                            Active
+                        </button>
+</div>
+</div>
+</div>
+<!-- Game Card: Nebula Dash -->
+<div class="glass-card rounded-lg overflow-hidden flex flex-col group hover:border-primary/50 transition-colors shadow-lg">
+<div class="relative h-48 overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A retro-futuristic synthwave racing track with neon grid lines stretching into a digital sunset. Intense streaks of pink and cyan light trails blur past the frame. The atmosphere is high-octane, nostalgic, and digitally immersive with a dark blue base layer and vibrant glowing accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKMbspuhPiv4OjJodDWqHb-_OLaVvQpnyUbD_VEqkq01nGXz23BS0Ez8p1x0aNROVWskj_0u4Ot9Mz6k8tJzLmGiTRqX6AAv3e8-dIjvIlRcOp3_1X_OZFFgiTLl4DAuAucFVf3i6IHPIt-rmCgF8RDRdj-B0gKdxjKZ1Ef_jQzva9ZXuYOsmVlz92ThdqRR-qIuRoCkIdMjGQZ-UOuI8BC_kO82LHjctCAd5H9m06YfUwNqHzq5ox4Ve-9-jSAbNzaUFAzFX0V29A"/>
+<div class="absolute top-md right-md bg-surface/80 backdrop-blur-md px-md py-xs rounded-full border border-white/10 flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-green-400"></span>
+<span class="font-label-sm text-label-sm text-on-surface">Active</span>
+</div>
+</div>
+<div class="p-lg flex flex-col flex-grow">
+<h3 class="font-headline-md text-headline-md text-primary mb-xs">Nebula Dash</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-lg">Hyper-speed cosmic racing through neon tunnels.</p>
+<div class="grid grid-cols-2 gap-md mb-lg">
+<div class="bg-surface-container-low p-md rounded-lg border border-white/5">
+<span class="font-label-sm text-label-sm text-on-surface-variant block mb-1 uppercase">Players</span>
+<span class="font-headline-lg text-headline-lg text-secondary">5,012</span>
+</div>
+<div class="bg-surface-container-low p-md rounded-lg border border-white/5">
+<span class="font-label-sm text-label-sm text-on-surface-variant block mb-1 uppercase">Rounds</span>
+<span class="font-headline-lg text-headline-lg text-tertiary">22.8k</span>
+</div>
+</div>
+<div class="mt-auto flex flex-wrap gap-sm">
+<button class="flex-1 flex items-center justify-center gap-xs py-sm border-2 border-primary text-primary rounded-lg font-label-lg text-label-lg hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-sm">settings</span>
+                            Edit
+                        </button>
+<button class="flex-1 flex items-center justify-center gap-xs py-sm border-2 border-secondary text-secondary rounded-lg font-label-lg text-label-lg hover:bg-secondary/10 transition-colors">
+<span class="material-symbols-outlined text-sm">build</span>
+                            Maint.
+                        </button>
+</div>
+</div>
+</div>
+<!-- New Game Placeholder -->
+<div class="glass-card rounded-lg border-2 border-dashed border-white/20 p-xl flex flex-col items-center justify-center text-center group hover:border-primary/40 transition-all cursor-pointer">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mb-lg group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">add_circle</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-xs">Add Content</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Tap here to upload new assets or configure a new room.</p>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-lg bg-surface-container/90 dark:bg-surface-container/90 backdrop-blur-2xl border-t border-white/5 shadow-[0_-4px_20px_rgba(0,0,0,0.4)] flex justify-around items-center h-20 px-gutter pb-safe">
+<a class="flex flex-col items-center justify-center text-secondary bg-secondary-container/20 rounded-xl px-4 py-1 shadow-[0_0_15px_rgba(255,176,205,0.4)]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">sports_esports</span>
+<span class="font-label-lg text-label-lg">Games</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="font-label-lg text-label-lg">Social</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">forum</span>
+<span class="font-label-lg text-label-lg">Message</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">person_pin</span>
+<span class="font-label-lg text-label-lg">Profile</span>
+</a>
+</nav>
+</body></html>
