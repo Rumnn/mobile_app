@@ -5,8 +5,8 @@ import '../providers/auth_provider.dart';
 import '../widgets/nebula_theme.dart';
 import 'admin_dashboard_screen.dart';
 import 'nebula_games_screen.dart';
+import 'nebula_message_screen.dart';
 import 'nebula_profile_screen.dart';
-import 'nebula_room_screen.dart';
 import 'nebula_social_screen.dart';
 
 class NebulaShellScreen extends StatefulWidget {
@@ -23,7 +23,7 @@ class _NebulaShellScreenState extends State<NebulaShellScreen> {
   static const _pages = [
     NebulaGamesScreen(),
     NebulaSocialScreen(),
-    NebulaRoomScreen(),
+    NebulaMessageScreen(),
     NebulaProfileScreen(),
   ];
 

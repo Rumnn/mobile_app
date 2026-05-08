@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/nebula_theme.dart';
+import 'ludo_screen.dart';
 import 'sliding_puzzle_screen.dart';
 
 class NebulaGamesScreen extends StatelessWidget {
@@ -62,6 +63,11 @@ class NebulaGamesScreen extends StatelessWidget {
               title: 'Sliding Puzzle',
               image: 'https://images.unsplash.com/photo-1611996515756-1d31fc370c25?q=80&w=900&auto=format&fit=crop',
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SlidingPuzzleScreen())),
+            ),
+            _GameCard(
+              title: 'Ludo Online',
+              image: 'https://images.unsplash.com/photo-1606167668584-78701c57f13d?q=80&w=900&auto=format&fit=crop',
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LudoScreen())),
             ),
             const _GameCard(title: 'Ma Sói', image: 'https://images.unsplash.com/photo-1520637836862-4d197d17c50a?q=80&w=900&auto=format&fit=crop'),
             const _GameCard(title: 'Vẽ và Đoán', image: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=900&auto=format&fit=crop'),
