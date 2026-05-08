@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/user_model.dart';
-import '../providers/auth_provider.dart';
 import '../providers/user_provider.dart';
 import '../services/user_service.dart';
+import '../widgets/role_guard.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -14,6 +14,10 @@ class AdminDashboardScreen extends StatefulWidget {
 }
 
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
+  String _searchQuery = '';
+  int _currentPage = 0;
+  static const int _itemsPerPage = 10;
+
   @override
   void initState() {
     super.initState();
@@ -192,60 +196,259 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = context.watch<AuthProvider>();
-    if (!auth.isAdmin) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Admin Dashboard')),
-        body: const Center(child: Text('Forbidden: admin only')),
-      );
+    final usersProvider = context.watch<UserProvider>();
+    final allUsers = usersProvider.users;
+
+    // Filter users based on search query
+    final filteredUsers = allUsers.where((u) {
+      final query = _searchQuery.toLowerCase();
+      return u.username.toLowerCase().contains(query) || u.email.toLowerCase().contains(query);
+    }).toList();
+
+    // Pagination logic
+    final totalPages = (filteredUsers.length / _itemsPerPage).ceil();
+    if (_currentPage >= totalPages && totalPages > 0) {
+      _currentPage = totalPages - 1;
     }
 
-    final usersProvider = context.watch<UserProvider>();
-    final users = usersProvider.users;
+    final startIndex = _currentPage * _itemsPerPage;
+    final endIndex = (startIndex + _itemsPerPage < filteredUsers.length)
+        ? startIndex + _itemsPerPage
+        : filteredUsers.length;
+    final paginatedUsers = filteredUsers.sublist(startIndex, endIndex);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Admin Dashboard'),
-        actions: [
-          IconButton(
-            tooltip: 'Refresh',
-            onPressed: usersProvider.isLoading ? null : () => context.read<UserProvider>().fetchUsers(),
-            icon: const Icon(Icons.refresh),
+    final totalUsers = allUsers.length;
+    final adminCount = allUsers.where((u) => u.role == 'admin').length;
+    final totalGamesCount = allUsers.fold<int>(0, (sum, u) => sum + u.totalGames);
+
+    return RoleGuard(
+      allowedRoles: const ['admin'],
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Command Center', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+          actions: [
+            IconButton(
+              tooltip: 'Sync Data',
+              onPressed: usersProvider.isLoading ? null : () => context.read<UserProvider>().fetchUsers(),
+              icon: const Icon(Icons.refresh, color: Colors.white70),
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () => _openEditDialog(),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          icon: const Icon(Icons.person_add, color: Colors.black),
+          label: const Text('Add User', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        ),
+        body: usersProvider.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : CustomScrollView(
+                slivers: [
+                  // Dashboard Header
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Monitoring real-time performance across the NebulaPlay ecosystem.',
+                            style: TextStyle(color: Colors.white70, fontSize: 16),
+                          ),
+                          const SizedBox(height: 24),
+                          // Metrics Grid
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _MetricCard(
+                                  title: 'Total Users',
+                                  value: totalUsers.toString(),
+                                  icon: Icons.groups,
+                                  color: Colors.purpleAccent,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: _MetricCard(
+                                  title: 'Admins',
+                                  value: adminCount.toString(),
+                                  icon: Icons.admin_panel_settings,
+                                  color: Colors.pinkAccent,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          _MetricCard(
+                            title: 'Total Games Played',
+                            value: totalGamesCount.toString(),
+                            icon: Icons.sports_esports,
+                            color: Colors.cyanAccent,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // User Management Section Title & Search
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Divider(color: Colors.white10, height: 40),
+                          const Text('User Management', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
+                          const SizedBox(height: 16),
+                          TextField(
+                            decoration: InputDecoration(
+                              hintText: 'Search by username or email...',
+                              prefixIcon: const Icon(Icons.search, color: Colors.white54),
+                              filled: true,
+                              fillColor: Colors.white.withOpacity(0.05),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                              suffixIcon: _searchQuery.isNotEmpty
+                                  ? IconButton(
+                                      icon: const Icon(Icons.clear, color: Colors.white54),
+                                      onPressed: () => setState(() {
+                                        _searchQuery = '';
+                                        _currentPage = 0;
+                                      }),
+                                    )
+                                  : null,
+                            ),
+                            style: const TextStyle(color: Colors.white),
+                            onChanged: (value) => setState(() {
+                              _searchQuery = value;
+                              _currentPage = 0;
+                            }),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // User List
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, i) {
+                          final u = paginatedUsers[i];
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.05),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.white.withOpacity(0.1)),
+                            ),
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                              leading: CircleAvatar(
+                                backgroundColor: u.role == 'admin' ? Colors.pinkAccent.withOpacity(0.2) : Colors.purpleAccent.withOpacity(0.2),
+                                child: Icon(
+                                  u.role == 'admin' ? Icons.shield : Icons.person,
+                                  color: u.role == 'admin' ? Colors.pinkAccent : Colors.purpleAccent,
+                                ),
+                              ),
+                              title: Text(u.username, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                              subtitle: Text('${u.email} • Level ${u.level}', style: const TextStyle(color: Colors.white54)),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    tooltip: 'Edit',
+                                    onPressed: () => _openEditDialog(user: u),
+                                    icon: const Icon(Icons.edit, color: Colors.white70),
+                                  ),
+                                  IconButton(
+                                    tooltip: 'Delete',
+                                    onPressed: () => _confirmDelete(u),
+                                    icon: const Icon(Icons.delete, color: Colors.redAccent),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                        childCount: paginatedUsers.length,
+                      ),
+                    ),
+                  ),
+
+                  // Pagination
+                  if (totalPages > 1)
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.chevron_left, color: Colors.white),
+                              onPressed: _currentPage > 0 ? () => setState(() => _currentPage--) : null,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text('Page ${_currentPage + 1} of $totalPages', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.chevron_right, color: Colors.white),
+                              onPressed: _currentPage < totalPages - 1 ? () => setState(() => _currentPage++) : null,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    
+                  // Bottom padding for FAB
+                  const SliverToBoxAdapter(child: SizedBox(height: 80)),
+                ],
+              ),
+      ),
+    );
+  }
+}
+
+class _MetricCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  const _MetricCard({required this.title, required this.value, required this.icon, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color, size: 24),
           ),
+          const SizedBox(height: 16),
+          Text(title, style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1)),
+          const SizedBox(height: 4),
+          Text(value, style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _openEditDialog(),
-        child: const Icon(Icons.add),
-      ),
-      body: usersProvider.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.separated(
-              itemCount: users.length,
-              separatorBuilder: (context, index) => const Divider(height: 1),
-              itemBuilder: (_, i) {
-                final u = users[i];
-                return ListTile(
-                  title: Text(u.username),
-                  subtitle: Text('${u.email} • ${u.role}'),
-                  trailing: Wrap(
-                    spacing: 8,
-                    children: [
-                      IconButton(
-                        tooltip: 'Edit',
-                        onPressed: () => _openEditDialog(user: u),
-                        icon: const Icon(Icons.edit),
-                      ),
-                      IconButton(
-                        tooltip: 'Delete',
-                        onPressed: () => _confirmDelete(u),
-                        icon: const Icon(Icons.delete),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
     );
   }
 }

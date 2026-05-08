@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
 import '../widgets/nebula_theme.dart';
+import 'admin_dashboard_screen.dart';
 import 'nebula_games_screen.dart';
 import 'nebula_profile_screen.dart';
 import 'nebula_room_screen.dart';
@@ -54,6 +55,16 @@ class _NebulaShellScreenState extends State<NebulaShellScreen> {
               ],
             ),
           ),
+          if (context.watch<AuthProvider>().isAdmin)
+            IconButton(
+              tooltip: 'Admin Dashboard',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const AdminDashboardScreen()),
+                );
+              },
+              icon: const Icon(Icons.admin_panel_settings, color: NebulaTheme.primary),
+            ),
           IconButton(
             onPressed: () => context.read<AuthProvider>().logout(),
             icon: const Icon(Icons.logout, color: NebulaTheme.textSubtle),

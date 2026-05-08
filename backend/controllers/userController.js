@@ -26,6 +26,29 @@ const getUsers = async (req, res, next) => {
   }
 };
 
+const getUserById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return sendResponse(res, 400, false, "Invalid user id", {});
+    }
+
+    const user = await User.findById(id).select("-password");
+    if (!user) {
+      return sendResponse(res, 404, false, "User not found", {});
+    }
+
+    const data =
+      req.user.role === "admin" || req.user._id.toString() === id
+        ? sanitizeUser(user)
+        : filterPublicFields(user);
+
+    return sendResponse(res, 200, true, "User fetched successfully", { user: data });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 const createUser = async (req, res, next) => {
   try {
     if (req.user.role !== "admin") {
@@ -131,6 +154,7 @@ const deleteUser = async (req, res, next) => {
 module.exports = {
   createUser,
   getUsers,
+  getUserById,
   updateUser,
   deleteUser,
 };
