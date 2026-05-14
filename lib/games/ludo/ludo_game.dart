@@ -26,6 +26,8 @@ class LudoGame extends FlameGame {
   LudoGameSnapshot? _snapshot;
   int _lastRevision = -1;
 
+  double get _boardTopInset => size.y >= size.x + 72 ? 84 : 0;
+
   @override
   Color backgroundColor() => const Color(0xFF0F0B3C);
 
@@ -104,17 +106,19 @@ class LudoGame extends FlameGame {
 
   void _resizeComponents() {
     if (size.x <= 0 || size.y <= 0) return;
-    final boardSize = math.min(size.x, size.y);
+    final boardTopInset = _boardTopInset;
+    final boardSize = math.min(size.x, size.y - boardTopInset);
     _board
-      ..position = LudoBoardLayout.boardOrigin(size)
+      ..position = LudoBoardLayout.boardOrigin(size, topInset: boardTopInset)
       ..size = Vector2.all(boardSize);
 
-    final overlayWidth = math.min(size.x - 24, 190).toDouble();
+    final overlayWidth = math.min(size.x - 24, 220).toDouble();
     _diceOverlay
       ..position = Vector2(12, 12)
-      ..size = Vector2(overlayWidth, 72);
+      ..size = Vector2(overlayWidth, 60);
 
-    final horseSize = LudoBoardLayout.cellSize(size) * 0.78;
+    final horseSize =
+        LudoBoardLayout.cellSize(size, topInset: boardTopInset) * 0.78;
     for (final horse in _horseComponents.values) {
       horse.size = Vector2.all(horseSize);
     }
@@ -155,8 +159,15 @@ class LudoGame extends FlameGame {
       fromPosition: move.fromPosition,
       toPosition: move.toPosition,
     );
+    final boardTopInset = _boardTopInset;
     final points = traversal
-        .map((node) => LudoBoardLayout.centerForGrid(size, node.grid))
+        .map(
+          (node) => LudoBoardLayout.centerForGrid(
+            size,
+            node.grid,
+            topInset: boardTopInset,
+          ),
+        )
         .toList();
 
     await component.animateAlong(points);
@@ -169,10 +180,16 @@ class LudoGame extends FlameGame {
     int stackSize = 1,
   }) {
     final grid = LudoBoardLayout.gridForHorse(horse);
-    final center = LudoBoardLayout.centerForGrid(size, grid);
+    final boardTopInset = _boardTopInset;
+    final center = LudoBoardLayout.centerForGrid(
+      size,
+      grid,
+      topInset: boardTopInset,
+    );
     if (stackSize <= 1) return center;
 
-    final radius = LudoBoardLayout.cellSize(size) * 0.18;
+    final radius =
+        LudoBoardLayout.cellSize(size, topInset: boardTopInset) * 0.18;
     final angle = (math.pi * 2 * stackIndex) / stackSize;
     return center + Vector2(math.cos(angle) * radius, math.sin(angle) * radius);
   }

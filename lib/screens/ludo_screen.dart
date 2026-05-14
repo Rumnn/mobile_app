@@ -31,10 +31,15 @@ class LudoScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: const SafeArea(
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(16, 8, 16, 32),
-          child: Center(child: LudoGameWidget()),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 520),
+              child: const LudoGameWidget(),
+            ),
+          ),
         ),
       ),
     );

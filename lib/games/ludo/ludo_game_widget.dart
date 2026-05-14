@@ -33,7 +33,7 @@ class _LudoGameWidgetState extends State<LudoGameWidget> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(18),
         child: AspectRatio(
-          aspectRatio: 1,
+          aspectRatio: 0.78,
           child: GameWidget(game: _game),
         ),
       ),

@@ -196,18 +196,27 @@ class LudoBoardLayout {
     ];
   }
 
-  static Vector2 boardOrigin(Vector2 gameSize) {
-    final boardSize = math.min(gameSize.x, gameSize.y);
-    return Vector2((gameSize.x - boardSize) / 2, (gameSize.y - boardSize) / 2);
+  static Vector2 boardOrigin(Vector2 gameSize, {double topInset = 0}) {
+    final availableHeight = math.max(0, gameSize.y - topInset);
+    final boardSize = math.min(gameSize.x, availableHeight);
+    return Vector2(
+      (gameSize.x - boardSize) / 2,
+      topInset + (availableHeight - boardSize) / 2,
+    );
   }
 
-  static double cellSize(Vector2 gameSize) {
-    return math.min(gameSize.x, gameSize.y) / gridSize;
+  static double cellSize(Vector2 gameSize, {double topInset = 0}) {
+    final availableHeight = math.max(0, gameSize.y - topInset);
+    return math.min(gameSize.x, availableHeight) / gridSize;
   }
 
-  static Vector2 centerForGrid(Vector2 gameSize, GridPoint grid) {
-    final cell = cellSize(gameSize);
-    final origin = boardOrigin(gameSize);
+  static Vector2 centerForGrid(
+    Vector2 gameSize,
+    GridPoint grid, {
+    double topInset = 0,
+  }) {
+    final cell = cellSize(gameSize, topInset: topInset);
+    final origin = boardOrigin(gameSize, topInset: topInset);
     return Vector2(
       origin.x + (grid.col + 0.5) * cell,
       origin.y + (grid.row + 0.5) * cell,
