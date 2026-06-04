@@ -1,4 +1,4 @@
-# 🎮 PlaySphere — Social Board Game Platform
+# 🎮 Sân Chơi Board Game Xã Hội
 
 Nền tảng trò chơi xã hội đa nền tảng được xây dựng bằng **Flutter** (frontend) và **Node.js/Express + MongoDB** (backend). Giao diện theo phong cách **NebulaPlay** — dark mode, glassmorphism, hiệu ứng động mượt mà.
 
@@ -165,7 +165,25 @@ Mở file `lib/services/app_config.dart` và cập nhật địa chỉ API phù 
 
 Đảm bảo cluster Atlas đang hoạt động, IP của bạn đã được allow trong **Network Access**, và `backend/.env` đã có `MONGODB_URI=mongodb+srv://...`.
 
-### Bước 2 — Khởi động Backend
+### Bước 2 — Khởi tạo tài khoản admin
+
+Chạy seed admin sau khi `backend/.env` đã kết nối được MongoDB Atlas. Lệnh này chỉ tạo admin nếu email chưa tồn tại.
+
+```bash
+cd backend
+npm run seed:admin
+```
+
+Tài khoản admin mặc định:
+
+```text
+Email: admin@admin.com
+Password: admin123
+```
+
+Sau khi đăng nhập lần đầu, nên đổi mật khẩu admin hoặc chỉnh thông tin mặc định trong `backend/seedAdmin.js` trước khi seed dữ liệu thật.
+
+### Bước 3 — Khởi động Backend
 
 ```bash
 cd backend
@@ -179,7 +197,7 @@ npm start
 
 > Server sẽ chạy tại `http://localhost:5000`
 
-### Bước 3 — Chạy ứng dụng Flutter
+### Bước 4 — Chạy ứng dụng Flutter
 
 ```bash
 # Quay về thư mục gốc
