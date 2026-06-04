@@ -90,7 +90,7 @@ mobile_app/
 | [Flutter SDK](https://docs.flutter.dev/get-started/install) | `>= 3.11.4` |
 | [Dart SDK](https://dart.dev/get-dart) | Đi kèm Flutter |
 | [Node.js](https://nodejs.org/) | `>= 18.x` |
-| [MongoDB](https://www.mongodb.com/try/download/community) | `>= 6.0` |
+| [MongoDB Atlas](https://www.mongodb.com/atlas/database) | Free cluster |
 | [Git](https://git-scm.com/) | Bất kỳ |
 
 ---
@@ -121,10 +121,23 @@ Chỉnh sửa file `backend/.env` theo cấu hình của bạn:
 
 ```env
 PORT=5000
-MONGODB_URI=mongodb://127.0.0.1:27017/social_board_game
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-url>/social_board_game?retryWrites=true&w=majority
+DNS_SERVERS=1.1.1.1,8.8.8.8
 JWT_SECRET=thay_bang_chuoi_bi_mat_manh
 JWT_EXPIRES_IN=7d
 ```
+
+Thiết lập MongoDB Atlas:
+
+1. Tạo free cluster trên MongoDB Atlas.
+2. Tạo database user trong **Database Access**.
+3. Thêm IP của bạn trong **Network Access**. Khi phát triển, có thể allow current IP.
+4. Vào **Connect > Drivers**, copy connection string dạng `mongodb+srv://...`, rồi dán vào `backend/.env`.
+5. Thay `<password>` bằng mật khẩu database user. Nếu mật khẩu có ký tự đặc biệt, hãy URL-encode mật khẩu.
+
+Khi `MONGODB_URI` trỏ tới Atlas, bạn không cần chạy MongoDB local.
+
+Nếu gặp lỗi `querySrv ECONNREFUSED _mongodb._tcp...`, giữ dòng `DNS_SERVERS=1.1.1.1,8.8.8.8` để Node.js resolve được connection string `mongodb+srv://`.
 
 ### 3. Cài đặt Frontend (Flutter)
 
@@ -148,15 +161,9 @@ Mở file `lib/services/app_config.dart` và cập nhật địa chỉ API phù 
 
 ## ▶️ Hướng dẫn chạy
 
-### Bước 1 — Khởi động MongoDB
+### Bước 1 — Kiểm tra MongoDB Atlas
 
-```bash
-# macOS / Linux
-mongod
-
-# Windows (nếu cài như service thì đã chạy sẵn)
-net start MongoDB
-```
+Đảm bảo cluster Atlas đang hoạt động, IP của bạn đã được allow trong **Network Access**, và `backend/.env` đã có `MONGODB_URI=mongodb+srv://...`.
 
 ### Bước 2 — Khởi động Backend
 
