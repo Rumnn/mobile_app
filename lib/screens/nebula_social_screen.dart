@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../models/comment_model.dart';
+import '../models/post_model.dart';
 import '../providers/auth_provider.dart';
+import '../providers/post_provider.dart';
+import '../services/follow_service.dart';
 import '../widgets/nebula_theme.dart';
 
 class NebulaSocialScreen extends StatefulWidget {
@@ -12,72 +16,88 @@ class NebulaSocialScreen extends StatefulWidget {
 }
 
 class _NebulaSocialScreenState extends State<NebulaSocialScreen> {
-  final List<Map<String, dynamic>> _posts = [
-    {
-      'id': '1',
-      'user': 'NeoVibe',
-      'avatar': 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400&auto=format&fit=crop',
-      'time': 'Đã đăng 2 giờ trước',
-      'content': 'Vừa đạt Pentakill trong trận đấu tối nay! Cảm giác thật bùng nổ 🚀 Ai muốn party tối mai không?',
-      'image': 'https://images.unsplash.com/photo-1560419015-7c427e8ae5ba?q=80&w=1400&auto=format&fit=crop',
-      'likes': 1200,
-      'comments': 45,
-      'isLiked': false,
-    },
-    {
-      'id': '2',
-      'user': 'VoidRunner',
-      'avatar': 'https://i.pravatar.cc/150?img=11',
-      'time': 'Vừa cập nhật',
-      'content': 'Đang tìm đồng đội leo rank Bạch Kim tối nay. Cần 1 Support và 1 Tanker. Anh em nào rảnh hú mình nha!',
-      'image': 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1400&auto=format&fit=crop',
-      'likes': 850,
-      'comments': 12,
-      'isLiked': true,
-    },
-  ];
+  final ScrollController _scrollController = ScrollController();
 
-  void _addNewPost(String content) {
-    final user = context.read<AuthProvider>().currentUser;
-    if (user == null || content.trim().isEmpty) return;
-
-    setState(() {
-      _posts.insert(0, {
-        'id': DateTime.now().millisecondsSinceEpoch.toString(),
-        'user': user.username,
-        'avatar': user.avatarURL.isNotEmpty ? user.avatarURL : 'https://i.pravatar.cc/150?img=12',
-        'time': 'Vừa xong',
-        'content': content.trim(),
-        'image': null,
-        'likes': 0,
-        'comments': 0,
-        'isLiked': false,
-      });
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PostProvider>().fetchPosts(refresh: true);
     });
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 300) {
+      context.read<PostProvider>().loadMore();
+    }
+  }
+
+  Future<void> _onRefresh() async {
+    await context.read<PostProvider>().fetchPosts(refresh: true);
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
-      itemCount: _posts.length + 1,
-      separatorBuilder: (context, index) => const SizedBox(height: 14),
-      itemBuilder: (context, index) {
-        if (index == 0) {
-          return _Composer(onPost: _addNewPost);
-        }
-        final post = _posts[index - 1];
-        return _PostCard(
-          key: ValueKey(post['id']),
-          postData: post,
-        );
-      },
+    final postProvider = context.watch<PostProvider>();
+
+    if (postProvider.isLoading && postProvider.posts.isEmpty) {
+      return const Center(
+        child: CircularProgressIndicator(color: NebulaTheme.primary),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      color: NebulaTheme.primary,
+      backgroundColor: NebulaTheme.surface,
+      child: ListView.separated(
+        controller: _scrollController,
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
+        itemCount: postProvider.posts.length + 2, // +1 composer, +1 loading
+        separatorBuilder: (_, _a) => const SizedBox(height: 14),
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return _Composer(
+              onPost: (content, imageURL) async {
+                await context.read<PostProvider>().createPost(
+                      content,
+                      imageURL: imageURL,
+                    );
+              },
+            );
+          }
+          if (index == postProvider.posts.length + 1) {
+            if (postProvider.isLoadingMore) {
+              return const Padding(
+                padding: EdgeInsets.all(16),
+                child: Center(
+                  child: CircularProgressIndicator(color: NebulaTheme.primary),
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          }
+          final post = postProvider.posts[index - 1];
+          return _PostCard(key: ValueKey(post.id), post: post);
+        },
+      ),
     );
   }
 }
 
+// ─── Composer ─────────────────────────────────────────────────
+
 class _Composer extends StatefulWidget {
-  final Function(String) onPost;
+  final Future<void> Function(String content, String? imageURL) onPost;
   const _Composer({required this.onPost});
 
   @override
@@ -86,13 +106,31 @@ class _Composer extends StatefulWidget {
 
 class _ComposerState extends State<_Composer> {
   final _controller = TextEditingController();
+  final _imageController = TextEditingController();
+  bool _showImageField = false;
+  bool _isPosting = false;
 
-  void _submit() {
-    if (_controller.text.trim().isNotEmpty) {
-      widget.onPost(_controller.text);
-      _controller.clear();
-      FocusScope.of(context).unfocus();
-    }
+  Future<void> _submit() async {
+    if (_controller.text.trim().isEmpty || _isPosting) return;
+    setState(() => _isPosting = true);
+    await widget.onPost(
+      _controller.text,
+      _imageController.text.isNotEmpty ? _imageController.text : null,
+    );
+    _controller.clear();
+    _imageController.clear();
+    setState(() {
+      _isPosting = false;
+      _showImageField = false;
+    });
+    if (mounted) FocusScope.of(context).unfocus();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _imageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -110,55 +148,116 @@ class _ComposerState extends State<_Composer> {
             children: [
               CircleAvatar(
                 radius: 22,
-                backgroundImage: NetworkImage(avatarUrl.isNotEmpty ? avatarUrl : 'https://i.pravatar.cc/150?img=12'),
-                onBackgroundImageError: (_, __) {},
+                backgroundImage: NetworkImage(
+                  avatarUrl.isNotEmpty
+                      ? avatarUrl
+                      : 'https://i.pravatar.cc/150?img=12',
+                ),
+                onBackgroundImageError: (_, _a) {},
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
-                  decoration: BoxDecoration(color: NebulaTheme.surfaceHigh, borderRadius: BorderRadius.circular(14)),
+                  decoration: BoxDecoration(
+                    color: NebulaTheme.surfaceHigh,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                   child: TextField(
                     controller: _controller,
                     style: const TextStyle(color: NebulaTheme.text),
                     maxLines: 3,
                     minLines: 1,
                     decoration: InputDecoration(
-                      hintText: 'Bạn đang nghĩ gì, ${user?.username ?? 'Gamer'}?',
-                      hintStyle: const TextStyle(color: NebulaTheme.textSubtle),
+                      hintText:
+                          'Bạn đang nghĩ gì, ${user?.username ?? 'Gamer'}?',
+                      hintStyle:
+                          const TextStyle(color: NebulaTheme.textSubtle),
                       border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 14),
                     ),
                   ),
                 ),
               ),
             ],
           ),
+          if (_showImageField) ...[
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              decoration: BoxDecoration(
+                color: NebulaTheme.surfaceHigh,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: TextField(
+                controller: _imageController,
+                style: const TextStyle(color: NebulaTheme.text, fontSize: 13),
+                decoration: const InputDecoration(
+                  hintText: 'Dán URL hình ảnh...',
+                  hintStyle: TextStyle(color: NebulaTheme.textSubtle),
+                  border: InputBorder.none,
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
-                children: const [
-                  Icon(Icons.image_outlined, color: NebulaTheme.secondary, size: 20),
-                  SizedBox(width: 4),
-                  Text('Ảnh', style: TextStyle(color: NebulaTheme.secondary, fontWeight: FontWeight.w600)),
-                  SizedBox(width: 16),
-                  Icon(Icons.videocam_outlined, color: NebulaTheme.tertiary, size: 20),
-                  SizedBox(width: 4),
-                  Text('Video', style: TextStyle(color: NebulaTheme.tertiary, fontWeight: FontWeight.w600)),
+                children: [
+                  InkWell(
+                    onTap: () =>
+                        setState(() => _showImageField = !_showImageField),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 4, vertical: 4),
+                      child: Row(
+                        children: [
+                          Icon(Icons.image_outlined,
+                              color: _showImageField
+                                  ? NebulaTheme.primary
+                                  : NebulaTheme.secondary,
+                              size: 20),
+                          const SizedBox(width: 4),
+                          Text('Ảnh',
+                              style: TextStyle(
+                                  color: _showImageField
+                                      ? NebulaTheme.primary
+                                      : NebulaTheme.secondary,
+                                  fontWeight: FontWeight.w600)),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
               InkWell(
-                onTap: _submit,
+                onTap: _isPosting ? null : _submit,
                 borderRadius: BorderRadius.circular(999),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(999),
-                    gradient: const LinearGradient(colors: [Color(0xFFA078FF), Color(0xFFAA0266)]),
+                    gradient: const LinearGradient(
+                        colors: [Color(0xFFA078FF), Color(0xFFAA0266)]),
                   ),
-                  child: const Text('Đăng', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+                  child: _isPosting
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white),
+                        )
+                      : const Text('Đăng',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700)),
                 ),
               ),
             ],
@@ -169,91 +268,330 @@ class _ComposerState extends State<_Composer> {
   }
 }
 
+// ─── Post Card ────────────────────────────────────────────────
+
 class _PostCard extends StatefulWidget {
-  final Map<String, dynamic> postData;
-  const _PostCard({super.key, required this.postData});
+  final PostModel post;
+  const _PostCard({super.key, required this.post});
 
   @override
   State<_PostCard> createState() => _PostCardState();
 }
 
 class _PostCardState extends State<_PostCard> {
-  late int likes;
-  late bool isLiked;
-  bool showCommentBox = false;
+  bool _showCommentBox = false;
+  bool _showComments = false;
+  List<CommentModel> _comments = [];
+  bool _loadingComments = false;
   final _commentCtrl = TextEditingController();
+  final FollowService _followService = FollowService();
+  bool? _isFollowing;
 
   @override
-  void initState() {
-    super.initState();
-    likes = widget.postData['likes'];
-    isLiked = widget.postData['isLiked'];
+  void dispose() {
+    _commentCtrl.dispose();
+    super.dispose();
   }
 
-  void _toggleLike() {
-    setState(() {
-      isLiked = !isLiked;
-      likes += isLiked ? 1 : -1;
-    });
+  String _timeAgo(DateTime dt) {
+    final diff = DateTime.now().difference(dt);
+    if (diff.inSeconds < 60) return 'Vừa xong';
+    if (diff.inMinutes < 60) return '${diff.inMinutes} phút trước';
+    if (diff.inHours < 24) return '${diff.inHours} giờ trước';
+    if (diff.inDays < 7) return '${diff.inDays} ngày trước';
+    return '${dt.day}/${dt.month}/${dt.year}';
+  }
+
+  Future<void> _toggleFollow() async {
+    final post = widget.post;
+    final currentUser = context.read<AuthProvider>().currentUser;
+    if (currentUser == null || post.authorId == currentUser.id) return;
+
+    try {
+      if (_isFollowing == true) {
+        await _followService.unfollow(post.authorId);
+        if (mounted) setState(() => _isFollowing = false);
+      } else {
+        await _followService.follow(post.authorId);
+        if (mounted) setState(() => _isFollowing = true);
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _loadComments() async {
+    setState(() => _loadingComments = true);
+    final comments =
+        await context.read<PostProvider>().getComments(widget.post.id);
+    if (mounted) {
+      setState(() {
+        _comments = comments;
+        _loadingComments = false;
+      });
+    }
+  }
+
+  Future<void> _submitComment() async {
+    if (_commentCtrl.text.trim().isEmpty) return;
+    final comment = await context
+        .read<PostProvider>()
+        .addComment(widget.post.id, _commentCtrl.text.trim());
+    if (comment != null && mounted) {
+      setState(() {
+        _comments.insert(0, comment);
+      });
+      _commentCtrl.clear();
+      FocusScope.of(context).unfocus();
+    }
+  }
+
+  void _showPostMenu() {
+    final currentUser = context.read<AuthProvider>().currentUser;
+    if (currentUser == null) return;
+    final isOwner = widget.post.authorId == currentUser.id;
+    final isAdmin = currentUser.role == 'admin';
+    if (!isOwner && !isAdmin) return;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: NebulaTheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(top: 12, bottom: 8),
+              decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            if (isOwner)
+              ListTile(
+                leading:
+                    const Icon(Icons.edit, color: NebulaTheme.primary),
+                title: const Text('Chỉnh sửa bài viết',
+                    style: TextStyle(color: NebulaTheme.text)),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _showEditDialog();
+                },
+              ),
+            ListTile(
+              leading:
+                  const Icon(Icons.delete_outline, color: Colors.redAccent),
+              title: const Text('Xóa bài viết',
+                  style: TextStyle(color: Colors.redAccent)),
+              onTap: () {
+                Navigator.pop(ctx);
+                _confirmDelete();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showEditDialog() async {
+    final editCtrl = TextEditingController(text: widget.post.content);
+    final result = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: NebulaTheme.surface,
+        title: const Text('Chỉnh sửa bài viết',
+            style: TextStyle(color: NebulaTheme.text)),
+        content: TextField(
+          controller: editCtrl,
+          maxLines: 5,
+          style: const TextStyle(color: NebulaTheme.text),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: NebulaTheme.surfaceHigh,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Hủy'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, editCtrl.text.trim()),
+            child: const Text('Lưu'),
+          ),
+        ],
+      ),
+    );
+    editCtrl.dispose();
+    if (result != null && result.isNotEmpty && mounted) {
+      await context
+          .read<PostProvider>()
+          .updatePost(widget.post.id, content: result);
+    }
+  }
+
+  Future<void> _confirmDelete() async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: NebulaTheme.surface,
+        title: const Text('Xóa bài viết?',
+            style: TextStyle(color: NebulaTheme.text)),
+        content: const Text(
+          'Bạn có chắc muốn xóa bài viết này? Hành động này không thể hoàn tác.',
+          style: TextStyle(color: NebulaTheme.textSubtle),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Hủy'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Xóa'),
+          ),
+        ],
+      ),
+    );
+    if (ok == true && mounted) {
+      final deleted =
+          await context.read<PostProvider>().deletePost(widget.post.id);
+      if (deleted && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Đã xóa bài viết')),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final post = widget.postData;
+    final post = widget.post;
+    final currentUser = context.watch<AuthProvider>().currentUser;
+    final isOwner = currentUser != null && post.authorId == currentUser.id;
+    final isAdmin = currentUser?.role == 'admin';
+    final canManage = isOwner || isAdmin;
+
     return Container(
       decoration: NebulaTheme.glass(),
       padding: const EdgeInsets.all(14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ── Header
           Row(
             children: [
               CircleAvatar(
-                backgroundImage: NetworkImage(post['avatar']),
-                onBackgroundImageError: (_, __) {},
+                backgroundImage: NetworkImage(
+                  post.authorAvatar.isNotEmpty
+                      ? post.authorAvatar
+                      : 'https://i.pravatar.cc/150?img=12',
+                ),
+                onBackgroundImageError: (_, _a) {},
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(post['user'], style: const TextStyle(color: NebulaTheme.text, fontWeight: FontWeight.w700, fontSize: 16)),
-                    Text(post['time'], style: const TextStyle(color: NebulaTheme.textSubtle, fontSize: 12)),
+                    Text(post.authorName,
+                        style: const TextStyle(
+                            color: NebulaTheme.text,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16)),
+                    Text(_timeAgo(post.createdAt),
+                        style: const TextStyle(
+                            color: NebulaTheme.textSubtle, fontSize: 12)),
                   ],
                 ),
               ),
-              OutlinedButton(
-                onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: NebulaTheme.primary),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              if (!isOwner)
+                OutlinedButton(
+                  onPressed: _toggleFollow,
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(
+                        color: _isFollowing == true
+                            ? NebulaTheme.textSubtle
+                            : NebulaTheme.primary),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: Text(
+                    _isFollowing == true ? 'Đang theo dõi' : 'Theo dõi',
+                    style: TextStyle(
+                        color: _isFollowing == true
+                            ? NebulaTheme.textSubtle
+                            : NebulaTheme.primary,
+                        fontSize: 12),
+                  ),
                 ),
-                child: const Text('Theo dõi', style: TextStyle(color: NebulaTheme.primary)),
-              ),
+              if (canManage)
+                IconButton(
+                  onPressed: _showPostMenu,
+                  icon: const Icon(Icons.more_vert,
+                      color: NebulaTheme.textSubtle, size: 20),
+                ),
             ],
           ),
+
+          // ── Content
           const SizedBox(height: 12),
-          Text(post['content'], style: const TextStyle(color: NebulaTheme.text, fontSize: 14)),
-          if (post['image'] != null) ...[
+          Text(post.content,
+              style:
+                  const TextStyle(color: NebulaTheme.text, fontSize: 14)),
+
+          // ── Image
+          if (post.imageURL.isNotEmpty) ...[
             const SizedBox(height: 12),
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: Image.network(post['image'], height: 200, width: double.infinity, fit: BoxFit.cover),
+              child: Image.network(
+                post.imageURL,
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (_, _a, _b) => const SizedBox.shrink(),
+              ),
             ),
           ],
+
+          // ── Actions
           const SizedBox(height: 12),
           Row(
             children: [
               InkWell(
-                onTap: _toggleLike,
+                onTap: () =>
+                    context.read<PostProvider>().toggleLike(post.id),
                 borderRadius: BorderRadius.circular(12),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                   child: Row(
                     children: [
-                      Icon(isLiked ? Icons.favorite : Icons.favorite_border, color: isLiked ? Colors.redAccent : NebulaTheme.textSubtle, size: 22),
+                      Icon(
+                          post.isLiked
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: post.isLiked
+                              ? Colors.redAccent
+                              : NebulaTheme.textSubtle,
+                          size: 22),
                       const SizedBox(width: 6),
-                      Text('$likes', style: TextStyle(color: isLiked ? Colors.redAccent : NebulaTheme.textSubtle, fontWeight: FontWeight.w600)),
+                      Text('${post.likesCount}',
+                          style: TextStyle(
+                              color: post.isLiked
+                                  ? Colors.redAccent
+                                  : NebulaTheme.textSubtle,
+                              fontWeight: FontWeight.w600)),
                     ],
                   ),
                 ),
@@ -262,17 +600,26 @@ class _PostCardState extends State<_PostCard> {
               InkWell(
                 onTap: () {
                   setState(() {
-                    showCommentBox = !showCommentBox;
+                    _showCommentBox = !_showCommentBox;
+                    if (_showCommentBox && !_showComments) {
+                      _showComments = true;
+                      _loadComments();
+                    }
                   });
                 },
                 borderRadius: BorderRadius.circular(12),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                   child: Row(
                     children: [
-                      const Icon(Icons.chat_bubble_outline, color: NebulaTheme.textSubtle, size: 22),
+                      const Icon(Icons.chat_bubble_outline,
+                          color: NebulaTheme.textSubtle, size: 22),
                       const SizedBox(width: 6),
-                      Text('${post['comments']}', style: const TextStyle(color: NebulaTheme.textSubtle, fontWeight: FontWeight.w600)),
+                      Text('${post.commentsCount}',
+                          style: const TextStyle(
+                              color: NebulaTheme.textSubtle,
+                              fontWeight: FontWeight.w600)),
                     ],
                   ),
                 ),
@@ -280,25 +627,119 @@ class _PostCardState extends State<_PostCard> {
               const Spacer(),
               IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.share_outlined, color: NebulaTheme.textSubtle, size: 22),
+                icon: const Icon(Icons.share_outlined,
+                    color: NebulaTheme.textSubtle, size: 22),
               ),
             ],
           ),
-          if (showCommentBox) ...[
+
+          // ── Comments section
+          if (_showCommentBox) ...[
             const Divider(color: Colors.white10, height: 24),
+
+            // Comment list
+            if (_loadingComments)
+              const Padding(
+                padding: EdgeInsets.all(8),
+                child: Center(
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: NebulaTheme.primary),
+                  ),
+                ),
+              )
+            else if (_comments.isNotEmpty)
+              ..._comments.map((c) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          radius: 14,
+                          backgroundImage: NetworkImage(
+                            c.authorAvatar.isNotEmpty
+                                ? c.authorAvatar
+                                : 'https://i.pravatar.cc/150?img=12',
+                          ),
+                          onBackgroundImageError: (_, __) {},
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: NebulaTheme.surfaceHigh,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(c.authorName,
+                                        style: const TextStyle(
+                                            color: NebulaTheme.text,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 12)),
+                                    const SizedBox(width: 6),
+                                    Text(_timeAgo(c.createdAt),
+                                        style: const TextStyle(
+                                            color: NebulaTheme.textSubtle,
+                                            fontSize: 10)),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(c.content,
+                                    style: const TextStyle(
+                                        color: NebulaTheme.text,
+                                        fontSize: 13)),
+                              ],
+                            ),
+                          ),
+                        ),
+                        if (currentUser != null &&
+                            (c.authorId == currentUser.id ||
+                                currentUser.role == 'admin'))
+                          IconButton(
+                            iconSize: 16,
+                            onPressed: () async {
+                              final deleted = await context
+                                  .read<PostProvider>()
+                                  .deleteComment(post.id, c.id);
+                              if (deleted && mounted) {
+                                setState(() {
+                                  _comments.removeWhere(
+                                      (cm) => cm.id == c.id);
+                                });
+                              }
+                            },
+                            icon: const Icon(Icons.close,
+                                color: NebulaTheme.textSubtle, size: 14),
+                          ),
+                      ],
+                    ),
+                  )),
+
+            // Comment input
             Row(
               children: [
                 Expanded(
                   child: Container(
                     height: 40,
                     padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(color: NebulaTheme.surfaceHigh, borderRadius: BorderRadius.circular(20)),
+                    decoration: BoxDecoration(
+                        color: NebulaTheme.surfaceHigh,
+                        borderRadius: BorderRadius.circular(20)),
                     child: TextField(
                       controller: _commentCtrl,
-                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                      style: const TextStyle(
+                          color: Colors.white, fontSize: 13),
                       decoration: const InputDecoration(
                         hintText: 'Viết bình luận...',
-                        hintStyle: TextStyle(color: NebulaTheme.textSubtle),
+                        hintStyle:
+                            TextStyle(color: NebulaTheme.textSubtle),
                         border: InputBorder.none,
                       ),
                     ),
@@ -306,24 +747,15 @@ class _PostCardState extends State<_PostCard> {
                 ),
                 const SizedBox(width: 8),
                 IconButton(
-                  onPressed: () {
-                    if (_commentCtrl.text.isNotEmpty) {
-                      setState(() {
-                        post['comments'] = post['comments'] + 1;
-                        showCommentBox = false;
-                      });
-                      _commentCtrl.clear();
-                      FocusScope.of(context).unfocus();
-                    }
-                  },
-                  icon: const Icon(Icons.send, color: NebulaTheme.primary),
-                )
+                  onPressed: _submitComment,
+                  icon:
+                      const Icon(Icons.send, color: NebulaTheme.primary),
+                ),
               ],
-            )
-          ]
+            ),
+          ],
         ],
       ),
     );
   }
 }
-
