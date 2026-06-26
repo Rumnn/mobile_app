@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
 import '../widgets/nebula_theme.dart';
+import '../widgets/create_post_sheet.dart';
 import 'admin_dashboard_screen.dart';
 import 'nebula_games_screen.dart';
 import 'nebula_message_screen.dart';
@@ -95,7 +96,7 @@ class _NebulaShellScreenState extends State<NebulaShellScreen> {
           : (_tab == 1
               ? FloatingActionButton(
                   backgroundColor: NebulaTheme.secondary.withValues(alpha: 0.9),
-                  onPressed: () {},
+                  onPressed: () => CreatePostSheet.show(context),
                   child: const Icon(Icons.edit, color: Colors.white),
                 )
               : null),
