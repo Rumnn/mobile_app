@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/settings_provider.dart';
 import '../widgets/nebula_theme.dart';
 
 class NebulaMessageScreen extends StatelessWidget {
@@ -6,6 +8,7 @@ class NebulaMessageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsProvider>();
     return Column(
       children: [
         // Search & Top Actions
@@ -19,14 +22,14 @@ class NebulaMessageScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: NebulaTheme.surfaceHigh,
                     borderRadius: BorderRadius.circular(22),
-                    border: Border.all(color: Colors.white.withOpacity(0.05)),
+                    border: Border.all(color: NebulaTheme.text.withValues(alpha: 0.08)),
                   ),
                   child: TextField(
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: NebulaTheme.text),
                     decoration: InputDecoration(
                       hintText: 'Search friends or groups...',
-                      hintStyle: TextStyle(color: NebulaTheme.textSubtle.withOpacity(0.5)),
-                      prefixIcon: const Icon(Icons.search, color: NebulaTheme.primary, size: 20),
+                      hintStyle: TextStyle(color: NebulaTheme.textSubtle.withValues(alpha: 0.5)),
+                      prefixIcon:       Icon(Icons.search, color: NebulaTheme.primary, size: 20),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
@@ -40,7 +43,7 @@ class NebulaMessageScreen extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: IconButton(
-                  icon: const Icon(Icons.group_add, color: NebulaTheme.primary),
+                  icon:       Icon(Icons.group_add, color: NebulaTheme.primary),
                   onPressed: () {},
                 ),
               ),
@@ -93,7 +96,7 @@ class NebulaMessageScreen extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       'User ${index + 1}',
-                      style: const TextStyle(color: NebulaTheme.text, fontSize: 11),
+                      style:       TextStyle(color: NebulaTheme.text, fontSize: 11),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -104,7 +107,7 @@ class NebulaMessageScreen extends StatelessWidget {
           ),
         ),
 
-        const Divider(color: Colors.white10, height: 1),
+        Divider(color: NebulaTheme.text.withValues(alpha: 0.08), height: 1),
 
         // Recent Chats List
         Expanded(
@@ -126,7 +129,7 @@ class NebulaMessageScreen extends StatelessWidget {
                       radius: 28,
                       backgroundColor: isGroup ? NebulaTheme.secondary.withOpacity(0.2) : Colors.transparent,
                       backgroundImage: isGroup ? null : NetworkImage(chat['avatar']),
-                      child: isGroup ? const Icon(Icons.groups, color: NebulaTheme.secondary) : null,
+                      child: isGroup ?       Icon(Icons.groups, color: NebulaTheme.secondary) : null,
                     ),
                     if (isGroup && chat['members'] != null)
                       Positioned(
@@ -154,7 +157,7 @@ class NebulaMessageScreen extends StatelessWidget {
                 subtitle: Row(
                   children: [
                     if (chat['isTyping'] == true)
-                      const Text('Typing...', style: TextStyle(color: NebulaTheme.tertiary, fontStyle: FontStyle.italic))
+                            Text('Typing...', style: TextStyle(color: NebulaTheme.tertiary, fontStyle: FontStyle.italic))
                     else
                       Expanded(
                         child: Text(
@@ -182,13 +185,17 @@ class NebulaMessageScreen extends StatelessWidget {
                     if (hasUnread)
                       Container(
                         padding: const EdgeInsets.all(6),
-                        decoration: const BoxDecoration(
+                        decoration:       BoxDecoration(
                           color: NebulaTheme.primary,
                           shape: BoxShape.circle,
                         ),
                         child: Text(
                           '${chat['unread']}',
-                          style: const TextStyle(color: NebulaTheme.background, fontSize: 10, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            color: NebulaTheme.primary.computeLuminance() > 0.5 ? Colors.black : Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                   ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
+import '../providers/settings_provider.dart';
 import '../widgets/nebula_theme.dart';
 import 'admin_dashboard_screen.dart';
 import 'nebula_games_screen.dart';
@@ -19,8 +20,8 @@ class NebulaShellScreen extends StatefulWidget {
 class _NebulaShellScreenState extends State<NebulaShellScreen> {
   int _tab = 0;
 
-  static const _titles = ['NebulaPlay', 'NebulaPlay', 'NebulaPlay', 'NebulaPlay'];
-  static const _pages = [
+  static const _titles = ['CluckTogether', 'CluckTogether', 'CluckTogether', 'CluckTogether'];
+  List<Widget> get _pages => [
     NebulaGamesScreen(),
     NebulaSocialScreen(),
     NebulaMessageScreen(),
@@ -29,14 +30,50 @@ class _NebulaShellScreenState extends State<NebulaShellScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
     return Scaffold(
       backgroundColor: NebulaTheme.background,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: NebulaTheme.background.withValues(alpha: 0.92),
-        title: ShaderMask(
-          shaderCallback: (bounds) => const LinearGradient(colors: [NebulaTheme.primary, NebulaTheme.secondary]).createShader(bounds),
-          child: Text(_titles[_tab], style: const TextStyle(fontSize: 40, color: Colors.white, fontWeight: FontWeight.w800)),
+        title: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFFFAF7EE),
+                boxShadow: [
+                  BoxShadow(
+                    color: NebulaTheme.primary.withValues(alpha: 0.2),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  ),
+                ],
+                border: Border.all(
+                  color: NebulaTheme.primary.withValues(alpha: 0.3),
+                  width: 1.5,
+                ),
+              ),
+              child: ClipOval(
+                child: Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Image.asset(
+                    'assets/images/logo.png',
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: ShaderMask(
+                shaderCallback: (bounds) =>       LinearGradient(colors: [NebulaTheme.primary, NebulaTheme.secondary]).createShader(bounds),
+                child: Text(_titles[_tab], style: const TextStyle(fontSize: 28, color: Colors.white, fontWeight: FontWeight.w800)),
+              ),
+            ),
+          ],
         ),
         actions: [
           Container(
@@ -47,11 +84,11 @@ class _NebulaShellScreenState extends State<NebulaShellScreen> {
               borderRadius: BorderRadius.circular(999),
               border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.monetization_on, color: NebulaTheme.secondary, size: 16),
-                SizedBox(width: 4),
-                Text('500 Coins', style: TextStyle(color: NebulaTheme.secondary, fontSize: 12)),
+                      Icon(Icons.monetization_on, color: NebulaTheme.secondary, size: 16),
+                const SizedBox(width: 4),
+                Text('500 ${settings.getText('coins')}', style:       TextStyle(color: NebulaTheme.secondary, fontSize: 12)),
               ],
             ),
           ),
@@ -63,11 +100,11 @@ class _NebulaShellScreenState extends State<NebulaShellScreen> {
                   MaterialPageRoute(builder: (_) => const AdminDashboardScreen()),
                 );
               },
-              icon: const Icon(Icons.admin_panel_settings, color: NebulaTheme.primary),
+              icon:       Icon(Icons.admin_panel_settings, color: NebulaTheme.primary),
             ),
           IconButton(
             onPressed: () => context.read<AuthProvider>().logout(),
-            icon: const Icon(Icons.logout, color: NebulaTheme.textSubtle),
+            icon:       Icon(Icons.logout, color: NebulaTheme.textSubtle),
           ),
         ],
       ),
@@ -79,24 +116,30 @@ class _NebulaShellScreenState extends State<NebulaShellScreen> {
         selectedItemColor: NebulaTheme.secondary,
         unselectedItemColor: NebulaTheme.textSubtle,
         type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.sports_esports), label: 'Games'),
-          BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Social'),
-          BottomNavigationBarItem(icon: Icon(Icons.forum), label: 'Message'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_pin), label: 'Profile'),
+        items: [
+          BottomNavigationBarItem(icon: const Icon(Icons.sports_esports), label: settings.getText('games')),
+          BottomNavigationBarItem(icon: const Icon(Icons.explore), label: settings.getText('social')),
+          BottomNavigationBarItem(icon: const Icon(Icons.forum), label: settings.getText('message')),
+          BottomNavigationBarItem(icon: const Icon(Icons.person_pin), label: settings.getText('profile')),
         ],
       ),
       floatingActionButton: _tab == 0
           ? FloatingActionButton(
               backgroundColor: NebulaTheme.primary.withValues(alpha: 0.9),
               onPressed: () {},
-              child: const Icon(Icons.add, color: Colors.white),
+              child: Icon(
+                Icons.add,
+                color: NebulaTheme.primary.computeLuminance() > 0.5 ? Colors.black : Colors.white,
+              ),
             )
           : (_tab == 1
               ? FloatingActionButton(
                   backgroundColor: NebulaTheme.secondary.withValues(alpha: 0.9),
                   onPressed: () {},
-                  child: const Icon(Icons.edit, color: Colors.white),
+                  child: Icon(
+                    Icons.edit,
+                    color: NebulaTheme.secondary.computeLuminance() > 0.5 ? Colors.black : Colors.white,
+                  ),
                 )
               : null),
     );

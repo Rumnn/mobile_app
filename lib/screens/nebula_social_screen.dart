@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
+import '../providers/settings_provider.dart';
 import '../widgets/nebula_theme.dart';
 
 class NebulaSocialScreen extends StatefulWidget {
@@ -58,6 +59,7 @@ class _NebulaSocialScreenState extends State<NebulaSocialScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsProvider>();
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
       itemCount: _posts.length + 1,
@@ -99,6 +101,7 @@ class _ComposerState extends State<_Composer> {
   Widget build(BuildContext context) {
     final user = context.watch<AuthProvider>().currentUser;
     final avatarUrl = user?.avatarURL ?? '';
+    context.watch<SettingsProvider>();
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -120,33 +123,33 @@ class _ComposerState extends State<_Composer> {
                   decoration: BoxDecoration(color: NebulaTheme.surfaceHigh, borderRadius: BorderRadius.circular(14)),
                   child: TextField(
                     controller: _controller,
-                    style: const TextStyle(color: NebulaTheme.text),
+                    style:       TextStyle(color: NebulaTheme.text),
                     maxLines: 3,
                     minLines: 1,
                     decoration: InputDecoration(
                       hintText: 'Bạn đang nghĩ gì, ${user?.username ?? 'Gamer'}?',
-                      hintStyle: const TextStyle(color: NebulaTheme.textSubtle),
+                      hintStyle:       TextStyle(color: NebulaTheme.textSubtle),
                       border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                      contentPadding:       EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                     ),
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
+                SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
-                children: const [
-                  Icon(Icons.image_outlined, color: NebulaTheme.secondary, size: 20),
-                  SizedBox(width: 4),
-                  Text('Ảnh', style: TextStyle(color: NebulaTheme.secondary, fontWeight: FontWeight.w600)),
-                  SizedBox(width: 16),
-                  Icon(Icons.videocam_outlined, color: NebulaTheme.tertiary, size: 20),
-                  SizedBox(width: 4),
-                  Text('Video', style: TextStyle(color: NebulaTheme.tertiary, fontWeight: FontWeight.w600)),
+                children:       [
+                  Icon(Icons.image_outlined, color: NebulaTheme.primary, size: 20),
+                  const SizedBox(width: 4),
+                  Text('Ảnh', style: TextStyle(color: NebulaTheme.primary, fontWeight: FontWeight.w600)),
+                  const SizedBox(width: 16),
+                  Icon(Icons.videocam_outlined, color: NebulaTheme.secondary, size: 20),
+                  const SizedBox(width: 4),
+                  Text('Video', style: TextStyle(color: NebulaTheme.secondary, fontWeight: FontWeight.w600)),
                 ],
               ),
               InkWell(
@@ -156,9 +159,17 @@ class _ComposerState extends State<_Composer> {
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(999),
-                    gradient: const LinearGradient(colors: [Color(0xFFA078FF), Color(0xFFAA0266)]),
+                    gradient: LinearGradient(
+                      colors: [NebulaTheme.primary, NebulaTheme.secondary],
+                    ),
                   ),
-                  child: const Text('Đăng', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+                  child: Text(
+                    'Đăng',
+                    style: TextStyle(
+                      color: NebulaTheme.primary.computeLuminance() > 0.5 ? Colors.black : Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -217,23 +228,23 @@ class _PostCardState extends State<_PostCard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(post['user'], style: const TextStyle(color: NebulaTheme.text, fontWeight: FontWeight.w700, fontSize: 16)),
-                    Text(post['time'], style: const TextStyle(color: NebulaTheme.textSubtle, fontSize: 12)),
+                    Text(post['user'], style:       TextStyle(color: NebulaTheme.text, fontWeight: FontWeight.w700, fontSize: 16)),
+                    Text(post['time'], style:       TextStyle(color: NebulaTheme.textSubtle, fontSize: 12)),
                   ],
                 ),
               ),
               OutlinedButton(
                 onPressed: () {},
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: NebulaTheme.primary),
+                  side:       BorderSide(color: NebulaTheme.primary),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text('Theo dõi', style: TextStyle(color: NebulaTheme.primary)),
+                child:       Text('Theo dõi', style: TextStyle(color: NebulaTheme.primary)),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          Text(post['content'], style: const TextStyle(color: NebulaTheme.text, fontSize: 14)),
+          Text(post['content'], style:       TextStyle(color: NebulaTheme.text, fontSize: 14)),
           if (post['image'] != null) ...[
             const SizedBox(height: 12),
             ClipRRect(
@@ -270,9 +281,9 @@ class _PostCardState extends State<_PostCard> {
                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                   child: Row(
                     children: [
-                      const Icon(Icons.chat_bubble_outline, color: NebulaTheme.textSubtle, size: 22),
+                            Icon(Icons.chat_bubble_outline, color: NebulaTheme.textSubtle, size: 22),
                       const SizedBox(width: 6),
-                      Text('${post['comments']}', style: const TextStyle(color: NebulaTheme.textSubtle, fontWeight: FontWeight.w600)),
+                      Text('${post['comments']}', style:       TextStyle(color: NebulaTheme.textSubtle, fontWeight: FontWeight.w600)),
                     ],
                   ),
                 ),
@@ -280,12 +291,12 @@ class _PostCardState extends State<_PostCard> {
               const Spacer(),
               IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.share_outlined, color: NebulaTheme.textSubtle, size: 22),
+                icon:       Icon(Icons.share_outlined, color: NebulaTheme.textSubtle, size: 22),
               ),
             ],
           ),
           if (showCommentBox) ...[
-            const Divider(color: Colors.white10, height: 24),
+            Divider(color: NebulaTheme.text.withValues(alpha: 0.08), height: 24),
             Row(
               children: [
                 Expanded(
@@ -295,8 +306,8 @@ class _PostCardState extends State<_PostCard> {
                     decoration: BoxDecoration(color: NebulaTheme.surfaceHigh, borderRadius: BorderRadius.circular(20)),
                     child: TextField(
                       controller: _commentCtrl,
-                      style: const TextStyle(color: Colors.white, fontSize: 13),
-                      decoration: const InputDecoration(
+                      style: TextStyle(color: NebulaTheme.text, fontSize: 13),
+                      decoration:       InputDecoration(
                         hintText: 'Viết bình luận...',
                         hintStyle: TextStyle(color: NebulaTheme.textSubtle),
                         border: InputBorder.none,
@@ -316,7 +327,7 @@ class _PostCardState extends State<_PostCard> {
                       FocusScope.of(context).unfocus();
                     }
                   },
-                  icon: const Icon(Icons.send, color: NebulaTheme.primary),
+                  icon:       Icon(Icons.send, color: NebulaTheme.primary),
                 )
               ],
             )

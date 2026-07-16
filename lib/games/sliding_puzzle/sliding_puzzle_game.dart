@@ -125,7 +125,7 @@ class _SlidingPuzzleGameState extends State<SlidingPuzzleGame>
                         ),
                       ],
                     ),
-                    child: const Icon(
+                    child:       Icon(
                       Icons.emoji_events_rounded,
                       color: NebulaTheme.secondary,
                       size: 44,
@@ -230,7 +230,7 @@ class _SlidingPuzzleGameState extends State<SlidingPuzzleGame>
         Text(
           value,
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.white, // In victory dialog (always dark)
             fontSize: 22,
             fontWeight: FontWeight.w800,
           ),
@@ -239,7 +239,7 @@ class _SlidingPuzzleGameState extends State<SlidingPuzzleGame>
         Text(
           label,
           style: TextStyle(
-            color: NebulaTheme.textSubtle,
+            color: Colors.white70, // In victory dialog (always dark)
             fontSize: 11,
             fontWeight: FontWeight.w500,
           ),
@@ -312,20 +312,20 @@ class _SlidingPuzzleGameState extends State<SlidingPuzzleGame>
               ],
             ),
           ),
-          child: const Icon(
+          child:       Icon(
             Icons.extension_rounded,
             color: NebulaTheme.primary,
             size: 22,
           ),
         ),
         const SizedBox(width: 12),
-        const Column(
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Sliding Puzzle',
               style: TextStyle(
-                color: Colors.white,
+                color: NebulaTheme.text,
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
                 letterSpacing: -0.3,
@@ -412,8 +412,8 @@ class _SlidingPuzzleGameState extends State<SlidingPuzzleGame>
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: NebulaTheme.text,
             fontSize: 20,
             fontWeight: FontWeight.w800,
           ),
@@ -477,7 +477,7 @@ class _SlidingPuzzleGameState extends State<SlidingPuzzleGame>
             child: Text(
               label,
               style: TextStyle(
-                color: isActive ? Colors.white : NebulaTheme.textSubtle,
+                color: isActive ? NebulaTheme.primary : NebulaTheme.textSubtle,
                 fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
                 fontSize: 14,
               ),

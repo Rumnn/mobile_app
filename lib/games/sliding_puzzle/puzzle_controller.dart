@@ -48,6 +48,18 @@ class PuzzleController extends ChangeNotifier {
     shuffle();
   }
 
+  /// Load a specific board configuration (e.g. from multiplayer server).
+  /// Resets moves, timer and win-state without shuffling.
+  void loadBoard(List<int> board) {
+    _stopTimer();
+    _tiles = List<int>.from(board);
+    _moves = 0;
+    _elapsed = 0;
+    _won = false;
+    _started = false;
+    notifyListeners();
+  }
+
   // ── Board initialisation ────────────────────────────────────────────────
 
   void _initSolved() {

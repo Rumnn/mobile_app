@@ -1,6 +1,6 @@
 # 🎮 Sân Chơi Board Game Xã Hội
 
-Nền tảng trò chơi xã hội đa nền tảng được xây dựng bằng **Flutter** (frontend) và **Node.js/Express + MongoDB** (backend). Giao diện theo phong cách **NebulaPlay** — dark mode, glassmorphism, hiệu ứng động mượt mà.
+Nền tảng trò chơi xã hội đa nền tảng được xây dựng bằng **Flutter** (frontend) và **Node.js/Express + MongoDB** (backend). Giao diện theo phong cách **CluckTogether** — dark mode, glassmorphism, hiệu ứng động mượt mà.
 
 ---
 

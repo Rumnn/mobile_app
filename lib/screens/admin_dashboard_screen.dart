@@ -5,6 +5,8 @@ import '../models/user_model.dart';
 import '../providers/user_provider.dart';
 import '../services/user_service.dart';
 import '../widgets/role_guard.dart';
+import '../widgets/nebula_theme.dart';
+import '../providers/settings_provider.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -196,6 +198,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsProvider>();
     final usersProvider = context.watch<UserProvider>();
     final allUsers = usersProvider.users;
 
@@ -224,13 +227,16 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     return RoleGuard(
       allowedRoles: const ['admin'],
       child: Scaffold(
+        backgroundColor: NebulaTheme.background,
         appBar: AppBar(
-          title: const Text('Command Center', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+          backgroundColor: NebulaTheme.background.withValues(alpha: 0.92),
+          elevation: 0,
+          title: Text('Command Center', style: TextStyle(fontWeight: FontWeight.bold, color: NebulaTheme.text)),
           actions: [
             IconButton(
               tooltip: 'Sync Data',
               onPressed: usersProvider.isLoading ? null : () => context.read<UserProvider>().fetchUsers(),
-              icon: const Icon(Icons.refresh, color: Colors.white70),
+              icon: Icon(Icons.refresh, color: NebulaTheme.textSubtle),
             ),
           ],
         ),
@@ -252,7 +258,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            'Monitoring real-time performance across the NebulaPlay ecosystem.',
+                            'Monitoring real-time performance across the CluckTogether ecosystem.',
                             style: TextStyle(color: Colors.white70, fontSize: 16),
                           ),
                           const SizedBox(height: 24),
@@ -297,19 +303,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Divider(color: Colors.white10, height: 40),
-                          const Text('User Management', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
+                          Divider(color: NebulaTheme.text.withValues(alpha: 0.1), height: 40),
+                          Text('User Management', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: NebulaTheme.text)),
                           const SizedBox(height: 16),
                           TextField(
                             decoration: InputDecoration(
                               hintText: 'Search by username or email...',
-                              prefixIcon: const Icon(Icons.search, color: Colors.white54),
+                              prefixIcon: Icon(Icons.search, color: NebulaTheme.textSubtle.withValues(alpha: 0.6)),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.05),
+                              fillColor: NebulaTheme.text.withValues(alpha: 0.05),
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                               suffixIcon: _searchQuery.isNotEmpty
                                   ? IconButton(
-                                      icon: const Icon(Icons.clear, color: Colors.white54),
+                                      icon: Icon(Icons.clear, color: NebulaTheme.textSubtle.withValues(alpha: 0.6)),
                                       onPressed: () => setState(() {
                                         _searchQuery = '';
                                         _currentPage = 0;
@@ -317,7 +323,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                     )
                                   : null,
                             ),
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(color: NebulaTheme.text),
                             onChanged: (value) => setState(() {
                               _searchQuery = value;
                               _currentPage = 0;
@@ -336,12 +342,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       delegate: SliverChildBuilderDelegate(
                         (context, i) {
                           final u = paginatedUsers[i];
-                          return Container(
+                           return Container(
                             margin: const EdgeInsets.only(bottom: 8),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.05),
+                              color: NebulaTheme.text.withValues(alpha: 0.05),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.white.withOpacity(0.1)),
+                              border: Border.all(color: NebulaTheme.text.withValues(alpha: 0.1)),
                             ),
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -352,15 +358,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                   color: u.role == 'admin' ? Colors.pinkAccent : Colors.purpleAccent,
                                 ),
                               ),
-                              title: Text(u.username, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                              subtitle: Text('${u.email} • Level ${u.level}', style: const TextStyle(color: Colors.white54)),
+                              title: Text(u.username, style: TextStyle(color: NebulaTheme.text, fontWeight: FontWeight.bold)),
+                              subtitle: Text('${u.email} • Level ${u.level}', style: TextStyle(color: NebulaTheme.textSubtle)),
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   IconButton(
                                     tooltip: 'Edit',
                                     onPressed: () => _openEditDialog(user: u),
-                                    icon: const Icon(Icons.edit, color: Colors.white70),
+                                    icon: Icon(Icons.edit, color: NebulaTheme.textSubtle),
                                   ),
                                   IconButton(
                                     tooltip: 'Delete',
@@ -386,19 +392,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.chevron_left, color: Colors.white),
+                              icon: Icon(Icons.chevron_left, color: NebulaTheme.text),
                               onPressed: _currentPage > 0 ? () => setState(() => _currentPage--) : null,
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.1),
+                                color: NebulaTheme.text.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              child: Text('Page ${_currentPage + 1} of $totalPages', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                              child: Text('Page ${_currentPage + 1} of $totalPages', style: TextStyle(color: NebulaTheme.text, fontWeight: FontWeight.bold)),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.chevron_right, color: Colors.white),
+                              icon: Icon(Icons.chevron_right, color: NebulaTheme.text),
                               onPressed: _currentPage < totalPages - 1 ? () => setState(() => _currentPage++) : null,
                             ),
                           ],
@@ -444,9 +450,9 @@ class _MetricCard extends StatelessWidget {
             child: Icon(icon, color: color, size: 24),
           ),
           const SizedBox(height: 16),
-          Text(title, style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1)),
+          Text(title, style: TextStyle(color: NebulaTheme.textSubtle, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1)),
           const SizedBox(height: 4),
-          Text(value, style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
+          Text(value, style: TextStyle(color: NebulaTheme.text, fontSize: 32, fontWeight: FontWeight.bold)),
         ],
       ),
     );

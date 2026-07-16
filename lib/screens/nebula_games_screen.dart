@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/settings_provider.dart';
 import '../widgets/nebula_theme.dart';
 import 'ludo_screen.dart';
-import 'sliding_puzzle_screen.dart';
+import 'multiplayer_lobby_screen.dart';
 
 class NebulaGamesScreen extends StatelessWidget {
   const NebulaGamesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    context.watch<SettingsProvider>();
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
       children: [
@@ -35,7 +38,7 @@ class NebulaGamesScreen extends StatelessWidget {
                 ],
               ),
             ),
-            child: const Column(
+            child:       Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -61,8 +64,9 @@ class NebulaGamesScreen extends StatelessWidget {
           children: [
             _GameCard(
               title: 'Sliding Puzzle',
+              badge: '⚔️ VS',
               image: 'https://images.unsplash.com/photo-1611996515756-1d31fc370c25?q=80&w=900&auto=format&fit=crop',
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SlidingPuzzleScreen())),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MultiplayerLobbyScreen())),
             ),
             _GameCard(
               title: 'Ludo Online',
@@ -97,7 +101,7 @@ class NebulaGamesScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: const TextStyle(color: NebulaTheme.text, fontSize: 28, fontWeight: FontWeight.w700)),
+        Text(title, style:       TextStyle(color: NebulaTheme.text, fontSize: 28, fontWeight: FontWeight.w700)),
         Text(trailing, style: TextStyle(color: accent ? NebulaTheme.tertiary : NebulaTheme.secondary, fontWeight: FontWeight.w600)),
       ],
     );
@@ -107,8 +111,9 @@ class NebulaGamesScreen extends StatelessWidget {
 class _GameCard extends StatelessWidget {
   final String title;
   final String image;
+  final String? badge;
   final VoidCallback? onTap;
-  const _GameCard({required this.title, required this.image, this.onTap});
+  const _GameCard({required this.title, required this.image, this.badge, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +134,30 @@ class _GameCard extends StatelessWidget {
               colors: [Colors.black.withValues(alpha: 0.55), Colors.transparent],
             ),
           ),
-          child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w700)),
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w700)),
+              ),
+              if (badge != null)
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: NebulaTheme.primary.withValues(alpha: 0.85),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      badge!,
+                      style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -153,14 +181,14 @@ class _RoomTile extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(title, style: const TextStyle(color: NebulaTheme.text, fontWeight: FontWeight.w700)),
-              Text(subtitle, style: const TextStyle(color: NebulaTheme.textSubtle, fontSize: 12)),
+              Text(title, style:       TextStyle(color: NebulaTheme.text, fontWeight: FontWeight.w700)),
+              Text(subtitle, style:       TextStyle(color: NebulaTheme.textSubtle, fontSize: 12)),
             ]),
           ),
           FilledButton(
             onPressed: () {},
             style: FilledButton.styleFrom(backgroundColor: NebulaTheme.primary.withValues(alpha: 0.22)),
-            child: const Text('Vào phòng', style: TextStyle(color: NebulaTheme.primary)),
+            child:       Text('Vào phòng', style: TextStyle(color: NebulaTheme.primary)),
           ),
         ],
       ),

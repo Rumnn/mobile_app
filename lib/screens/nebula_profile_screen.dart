@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
 import '../providers/user_provider.dart';
+import '../providers/settings_provider.dart';
 import '../widgets/nebula_theme.dart';
+import 'settings_screen.dart';
 
 class NebulaProfileScreen extends StatefulWidget {
   const NebulaProfileScreen({super.key});
@@ -26,7 +28,7 @@ class _NebulaProfileScreenState extends State<NebulaProfileScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: NebulaTheme.surfaceHigh,
-        title: const Text('Edit Profile', style: TextStyle(color: NebulaTheme.text)),
+        title:       Text('Edit Profile', style: TextStyle(color: NebulaTheme.text)),
         content: Form(
           key: formKey,
           child: Column(
@@ -34,8 +36,8 @@ class _NebulaProfileScreenState extends State<NebulaProfileScreen> {
             children: [
               TextFormField(
                 controller: usernameCtrl,
-                style: const TextStyle(color: NebulaTheme.text),
-                decoration: const InputDecoration(
+                style:       TextStyle(color: NebulaTheme.text),
+                decoration:       InputDecoration(
                   labelText: 'Username',
                   labelStyle: TextStyle(color: NebulaTheme.textSubtle),
                   enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: NebulaTheme.textSubtle)),
@@ -45,8 +47,8 @@ class _NebulaProfileScreenState extends State<NebulaProfileScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: avatarCtrl,
-                style: const TextStyle(color: NebulaTheme.text),
-                decoration: const InputDecoration(
+                style:       TextStyle(color: NebulaTheme.text),
+                decoration:       InputDecoration(
                   labelText: 'Avatar URL',
                   labelStyle: TextStyle(color: NebulaTheme.textSubtle),
                   enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: NebulaTheme.textSubtle)),
@@ -58,7 +60,7 @@ class _NebulaProfileScreenState extends State<NebulaProfileScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel', style: TextStyle(color: NebulaTheme.textSubtle)),
+            child:       Text('Cancel', style: TextStyle(color: NebulaTheme.textSubtle)),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: NebulaTheme.primary),
@@ -70,7 +72,7 @@ class _NebulaProfileScreenState extends State<NebulaProfileScreen> {
                 });
               }
             },
-            child: const Text('Save', style: TextStyle(color: NebulaTheme.background)),
+            child:       Text('Save', style: TextStyle(color: NebulaTheme.background)),
           ),
         ],
       ),
@@ -90,10 +92,11 @@ class _NebulaProfileScreenState extends State<NebulaProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
+    final settings = context.watch<SettingsProvider>();
     final user = auth.currentUser;
 
     if (user == null) {
-      return const Center(child: Text('Not logged in', style: TextStyle(color: NebulaTheme.text)));
+      return Center(child: Text(settings.getText('not_logged_in'), style:       TextStyle(color: NebulaTheme.text)));
     }
 
     final avatarUrl = user.avatarURL.isNotEmpty
@@ -117,25 +120,25 @@ class _NebulaProfileScreenState extends State<NebulaProfileScreen> {
                 ),
               ),
               const SizedBox(height: 10),
-              Text(user.username, style: const TextStyle(color: NebulaTheme.text, fontSize: 32, fontWeight: FontWeight.w700)),
+              Text(user.username, style:       TextStyle(color: NebulaTheme.text, fontSize: 32, fontWeight: FontWeight.w700)),
               const SizedBox(height: 4),
-              Text('LEVEL ${user.level} ${user.role.toUpperCase()}', style: const TextStyle(color: NebulaTheme.primary, fontWeight: FontWeight.w600, fontSize: 11)),
+              Text('LEVEL ${user.level} ${user.role.toUpperCase()}', style:       TextStyle(color: NebulaTheme.primary, fontWeight: FontWeight.w600, fontSize: 11)),
               const SizedBox(height: 8),
-              Text(user.email, style: const TextStyle(color: NebulaTheme.textSubtle)),
+              Text(user.email, style:       TextStyle(color: NebulaTheme.textSubtle)),
               const SizedBox(height: 14),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _Stat(title: '${user.winRate}%', subtitle: 'WIN RATE'),
-                  _Stat(title: '${user.totalGames}', subtitle: 'GAMES'),
-                  const _Stat(title: '0', subtitle: 'FRIENDS'),
+                  _Stat(title: '${user.winRate}%', subtitle: settings.getText('win_rate')),
+                  _Stat(title: '${user.totalGames}', subtitle: settings.getText('games_played')),
+                  _Stat(title: '0', subtitle: settings.getText('friends')),
                 ],
               ),
               const SizedBox(height: 14),
               FilledButton(
                 onPressed: _openEditProfileDialog,
                 style: FilledButton.styleFrom(backgroundColor: NebulaTheme.primary.withOpacity(0.24), minimumSize: const Size.fromHeight(46)),
-                child: const Text('Edit Profile', style: TextStyle(color: NebulaTheme.primary)),
+                child: Text(settings.getText('edit_profile'), style:       TextStyle(color: NebulaTheme.primary)),
               ),
             ],
           ),
@@ -144,10 +147,10 @@ class _NebulaProfileScreenState extends State<NebulaProfileScreen> {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: NebulaTheme.glass(),
-          child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Achievements', style: TextStyle(color: NebulaTheme.text, fontSize: 20, fontWeight: FontWeight.w700)),
-            SizedBox(height: 10),
-            Wrap(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(settings.getText('achievements'), style:       TextStyle(color: NebulaTheme.text, fontSize: 20, fontWeight: FontWeight.w700)),
+            const SizedBox(height: 10),
+            const Wrap(
               spacing: 8,
               runSpacing: 8,
               children: [
@@ -157,6 +160,39 @@ class _NebulaProfileScreenState extends State<NebulaProfileScreen> {
               ],
             )
           ]),
+        ),
+        const SizedBox(height: 14),
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: NebulaTheme.glass(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                settings.getText('settings'),
+                style:       TextStyle(color: NebulaTheme.text, fontSize: 20, fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 10),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading:       Icon(Icons.settings, color: NebulaTheme.primary),
+                title: Text(
+                  settings.getText('customize_ui'),
+                  style:       TextStyle(color: NebulaTheme.text, fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                  settings.getText('customize_ui_desc'),
+                  style:       TextStyle(color: NebulaTheme.textSubtle, fontSize: 13),
+                ),
+                trailing:       Icon(Icons.arrow_forward_ios, color: NebulaTheme.textSubtle, size: 16),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -171,8 +207,8 @@ class _Stat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      Text(title, style: const TextStyle(color: NebulaTheme.text, fontWeight: FontWeight.w700)),
-      Text(subtitle, style: const TextStyle(color: NebulaTheme.textSubtle, fontSize: 11)),
+      Text(title, style:       TextStyle(color: NebulaTheme.text, fontWeight: FontWeight.w700)),
+      Text(subtitle, style:       TextStyle(color: NebulaTheme.textSubtle, fontSize: 11)),
     ]);
   }
 }
@@ -186,7 +222,7 @@ class _Badge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(color: NebulaTheme.surfaceHigh, borderRadius: BorderRadius.circular(12)),
-      child: Text(text, style: const TextStyle(color: NebulaTheme.text)),
+      child: Text(text, style:       TextStyle(color: NebulaTheme.text)),
     );
   }
 }

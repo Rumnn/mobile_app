@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'providers/auth_provider.dart';
 import 'providers/user_provider.dart';
+import 'providers/settings_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/nebula_shell_screen.dart';
 import 'widgets/nebula_theme.dart';
@@ -21,20 +22,34 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()..init()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => SettingsProvider()..init()),
       ],
-      child: MaterialApp(
-        title: 'Social Board Game',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: NebulaTheme.primary,
-            brightness: Brightness.dark,
-            surface: NebulaTheme.surface,
-          ),
-          scaffoldBackgroundColor: NebulaTheme.background,
-          useMaterial3: true,
+      child: const _AppBuilder(),
+    );
+  }
+}
+
+class _AppBuilder extends StatelessWidget {
+  const _AppBuilder();
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
+    final isLight = settings.isLightMode;
+
+    return MaterialApp(
+      title: 'CluckTogether',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: NebulaTheme.primary,
+          brightness: isLight ? Brightness.light : Brightness.dark,
+          surface: NebulaTheme.surface,
         ),
-        home: const _RootRouter(),
+        scaffoldBackgroundColor: NebulaTheme.background,
+        useMaterial3: true,
       ),
+      home: const _RootRouter(),
     );
   }
 }

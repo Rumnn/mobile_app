@@ -16,7 +16,7 @@ class NebulaRoomScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: NebulaTheme.glass(),
-                child: const Row(
+                child:       Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -34,18 +34,18 @@ class NebulaRoomScreen extends StatelessWidget {
               const SizedBox(height: 18),
               const _PlayersRing(),
               const SizedBox(height: 16),
-              const Text('ShadowNinja: Tôi nghĩ Gamer777 là sói đó.', style: TextStyle(color: NebulaTheme.textSubtle)),
+                    Text('ShadowNinja: Tôi nghĩ Gamer777 là sói đó.', style: TextStyle(color: NebulaTheme.textSubtle)),
               const SizedBox(height: 6),
-              const Text('CyberX: Đồng ý, tối qua thấy di chuyển lạ lắm.', style: TextStyle(color: NebulaTheme.textSubtle)),
+                    Text('CyberX: Đồng ý, tối qua thấy di chuyển lạ lắm.', style: TextStyle(color: NebulaTheme.textSubtle)),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: NebulaTheme.primary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
-                  border: const Border(left: BorderSide(color: NebulaTheme.primary, width: 3)),
+                  border:       Border(left: BorderSide(color: NebulaTheme.primary, width: 3)),
                 ),
-                child: const Text(
+                child:       Text(
                   'Hệ thống: Đến giờ thảo luận, hãy chọn người bị tình nghi.',
                   style: TextStyle(color: NebulaTheme.primary, fontStyle: FontStyle.italic),
                 ),
@@ -60,7 +60,7 @@ class NebulaRoomScreen extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14),
                 decoration: NebulaTheme.glass(radius: BorderRadius.circular(999)),
-                child: const TextField(
+                child:       TextField(
                   style: TextStyle(color: NebulaTheme.text),
                   decoration: InputDecoration(
                     hintText: 'Nhập tin nhắn...',
@@ -117,7 +117,7 @@ class _PlayersRing extends StatelessWidget {
                 color: NebulaTheme.surface.withValues(alpha: 0.6),
                 border: Border.all(color: NebulaTheme.primary.withValues(alpha: 0.25)),
               ),
-              child: const Column(
+              child:       Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.nightlight_round, color: NebulaTheme.primary, size: 42),
