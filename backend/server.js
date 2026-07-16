@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const postRoutes = require("./routes/postRoutes");
 const { errorHandler, notFoundHandler } = require("./middlewares/errorMiddleware");
 
 const http = require("http");
@@ -29,6 +30,7 @@ app.get("/", (req, res) => {
 
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
+app.use("/posts", postRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
