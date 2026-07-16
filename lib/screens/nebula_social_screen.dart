@@ -50,7 +50,7 @@ class _NebulaSocialScreenState extends State<NebulaSocialScreen> {
     final postProvider = context.watch<PostProvider>();
 
     if (postProvider.isLoading && postProvider.posts.isEmpty) {
-      return const Center(
+      return Center(
         child: CircularProgressIndicator(color: NebulaTheme.primary),
       );
     }
@@ -77,7 +77,7 @@ class _NebulaSocialScreenState extends State<NebulaSocialScreen> {
           }
           if (index == postProvider.posts.length + 1) {
             if (postProvider.isLoadingMore) {
-              return const Padding(
+              return Padding(
                 padding: EdgeInsets.all(16),
                 child: Center(
                   child: CircularProgressIndicator(color: NebulaTheme.primary),
@@ -165,14 +165,14 @@ class _ComposerState extends State<_Composer> {
                   ),
                   child: TextField(
                     controller: _controller,
-                    style: const TextStyle(color: NebulaTheme.text),
+                    style: TextStyle(color: NebulaTheme.text),
                     maxLines: 3,
                     minLines: 1,
                     decoration: InputDecoration(
                       hintText:
                           'Bạn đang nghĩ gì, ${user?.username ?? 'Gamer'}?',
                       hintStyle:
-                          const TextStyle(color: NebulaTheme.textSubtle),
+                          TextStyle(color: NebulaTheme.textSubtle),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 14),
@@ -192,8 +192,8 @@ class _ComposerState extends State<_Composer> {
               ),
               child: TextField(
                 controller: _imageController,
-                style: const TextStyle(color: NebulaTheme.text, fontSize: 13),
-                decoration: const InputDecoration(
+                style: TextStyle(color: NebulaTheme.text, fontSize: 13),
+                decoration: InputDecoration(
                   hintText: 'Dán URL hình ảnh...',
                   hintStyle: TextStyle(color: NebulaTheme.textSubtle),
                   border: InputBorder.none,
@@ -244,7 +244,7 @@ class _ComposerState extends State<_Composer> {
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(999),
-                    gradient: const LinearGradient(
+                    gradient: LinearGradient(
                         colors: [Color(0xFFA078FF), Color(0xFFAA0266)]),
                   ),
                   child: _isPosting
@@ -373,8 +373,8 @@ class _PostCardState extends State<_PostCard> {
             if (isOwner)
               ListTile(
                 leading:
-                    const Icon(Icons.edit, color: NebulaTheme.primary),
-                title: const Text('Chỉnh sửa bài viết',
+                    Icon(Icons.edit, color: NebulaTheme.primary),
+                title: Text('Chỉnh sửa bài viết',
                     style: TextStyle(color: NebulaTheme.text)),
                 onTap: () {
                   Navigator.pop(ctx);
@@ -383,7 +383,7 @@ class _PostCardState extends State<_PostCard> {
               ),
             ListTile(
               leading:
-                  const Icon(Icons.delete_outline, color: Colors.redAccent),
+                  Icon(Icons.delete_outline, color: Colors.redAccent),
               title: const Text('Xóa bài viết',
                   style: TextStyle(color: Colors.redAccent)),
               onTap: () {
@@ -403,12 +403,12 @@ class _PostCardState extends State<_PostCard> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: NebulaTheme.surface,
-        title: const Text('Chỉnh sửa bài viết',
+        title: Text('Chỉnh sửa bài viết',
             style: TextStyle(color: NebulaTheme.text)),
         content: TextField(
           controller: editCtrl,
           maxLines: 5,
-          style: const TextStyle(color: NebulaTheme.text),
+          style: TextStyle(color: NebulaTheme.text),
           decoration: InputDecoration(
             filled: true,
             fillColor: NebulaTheme.surfaceHigh,
@@ -443,9 +443,9 @@ class _PostCardState extends State<_PostCard> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: NebulaTheme.surface,
-        title: const Text('Xóa bài viết?',
+        title: Text('Xóa bài viết?',
             style: TextStyle(color: NebulaTheme.text)),
-        content: const Text(
+        content: Text(
           'Bạn có chắc muốn xóa bài viết này? Hành động này không thể hoàn tác.',
           style: TextStyle(color: NebulaTheme.textSubtle),
         ),
@@ -504,12 +504,12 @@ class _PostCardState extends State<_PostCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(post.authorName,
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: NebulaTheme.text,
                             fontWeight: FontWeight.w700,
                             fontSize: 16)),
                     Text(_timeAgo(post.createdAt),
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: NebulaTheme.textSubtle, fontSize: 12)),
                   ],
                 ),
@@ -537,7 +537,7 @@ class _PostCardState extends State<_PostCard> {
               if (canManage)
                 IconButton(
                   onPressed: _showPostMenu,
-                  icon: const Icon(Icons.more_vert,
+                  icon: Icon(Icons.more_vert,
                       color: NebulaTheme.textSubtle, size: 20),
                 ),
             ],
@@ -547,7 +547,7 @@ class _PostCardState extends State<_PostCard> {
           const SizedBox(height: 12),
           Text(post.content,
               style:
-                  const TextStyle(color: NebulaTheme.text, fontSize: 14)),
+                  TextStyle(color: NebulaTheme.text, fontSize: 14)),
 
           // ── Image
           if (post.imageURL.isNotEmpty) ...[
@@ -613,11 +613,11 @@ class _PostCardState extends State<_PostCard> {
                       const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                   child: Row(
                     children: [
-                      const Icon(Icons.chat_bubble_outline,
+                      Icon(Icons.chat_bubble_outline,
                           color: NebulaTheme.textSubtle, size: 22),
                       const SizedBox(width: 6),
                       Text('${post.commentsCount}',
-                          style: const TextStyle(
+                          style: TextStyle(
                               color: NebulaTheme.textSubtle,
                               fontWeight: FontWeight.w600)),
                     ],
@@ -627,7 +627,7 @@ class _PostCardState extends State<_PostCard> {
               const Spacer(),
               IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.share_outlined,
+                icon: Icon(Icons.share_outlined,
                     color: NebulaTheme.textSubtle, size: 22),
               ),
             ],
@@ -639,7 +639,7 @@ class _PostCardState extends State<_PostCard> {
 
             // Comment list
             if (_loadingComments)
-              const Padding(
+              Padding(
                 padding: EdgeInsets.all(8),
                 child: Center(
                   child: SizedBox(
@@ -679,20 +679,20 @@ class _PostCardState extends State<_PostCard> {
                                 Row(
                                   children: [
                                     Text(c.authorName,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                             color: NebulaTheme.text,
                                             fontWeight: FontWeight.w700,
                                             fontSize: 12)),
                                     const SizedBox(width: 6),
                                     Text(_timeAgo(c.createdAt),
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                             color: NebulaTheme.textSubtle,
                                             fontSize: 10)),
                                   ],
                                 ),
                                 const SizedBox(height: 4),
                                 Text(c.content,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                         color: NebulaTheme.text,
                                         fontSize: 13)),
                               ],
@@ -715,7 +715,7 @@ class _PostCardState extends State<_PostCard> {
                                 });
                               }
                             },
-                            icon: const Icon(Icons.close,
+                            icon: Icon(Icons.close,
                                 color: NebulaTheme.textSubtle, size: 14),
                           ),
                       ],
@@ -734,9 +734,9 @@ class _PostCardState extends State<_PostCard> {
                         borderRadius: BorderRadius.circular(20)),
                     child: TextField(
                       controller: _commentCtrl,
-                      style: const TextStyle(
+                      style: TextStyle(
                           color: Colors.white, fontSize: 13),
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: 'Viết bình luận...',
                         hintStyle:
                             TextStyle(color: NebulaTheme.textSubtle),
@@ -749,7 +749,7 @@ class _PostCardState extends State<_PostCard> {
                 IconButton(
                   onPressed: _submitComment,
                   icon:
-                      const Icon(Icons.send, color: NebulaTheme.primary),
+                      Icon(Icons.send, color: NebulaTheme.primary),
                 ),
               ],
             ),

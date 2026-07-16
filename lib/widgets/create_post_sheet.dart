@@ -118,7 +118,7 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ShaderMask(
-                  shaderCallback: (bounds) => const LinearGradient(
+                  shaderCallback: (bounds) => LinearGradient(
                     colors: [NebulaTheme.primary, NebulaTheme.secondary],
                   ).createShader(bounds),
                   child: const Text(
@@ -132,7 +132,7 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
                 ),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close, color: NebulaTheme.textSubtle),
+                  icon: Icon(Icons.close, color: NebulaTheme.textSubtle),
                 ),
               ],
             ),
@@ -154,7 +154,7 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
                 const SizedBox(width: 12),
                 Text(
                   user?.username ?? 'Gamer',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: NebulaTheme.text,
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
@@ -175,10 +175,10 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
                 controller: _contentController,
                 maxLines: 6,
                 minLines: 3,
-                style: const TextStyle(color: NebulaTheme.text, fontSize: 15),
+                style: TextStyle(color: NebulaTheme.text, fontSize: 15),
                 decoration: InputDecoration(
                   hintText: 'Bạn đang nghĩ gì, ${user?.username ?? 'Gamer'}?',
-                  hintStyle: const TextStyle(color: NebulaTheme.textSubtle, fontSize: 15),
+                  hintStyle: TextStyle(color: NebulaTheme.textSubtle, fontSize: 15),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.all(16),
                 ),
@@ -192,8 +192,8 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
                 alignment: Alignment.centerLeft,
                 child: TextButton.icon(
                   onPressed: () => setState(() => _showImageField = true),
-                  icon: const Icon(Icons.image_outlined, color: NebulaTheme.secondary, size: 20),
-                  label: const Text(
+                  icon: Icon(Icons.image_outlined, color: NebulaTheme.secondary, size: 20),
+                  label: Text(
                     'Thêm ảnh (URL)',
                     style: TextStyle(color: NebulaTheme.secondary),
                   ),
@@ -213,8 +213,8 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
                     Expanded(
                       child: TextField(
                         controller: _imageController,
-                        style: const TextStyle(color: NebulaTheme.text, fontSize: 14),
-                        decoration: const InputDecoration(
+                        style: TextStyle(color: NebulaTheme.text, fontSize: 14),
+                        decoration: InputDecoration(
                           hintText: 'Nhập URL hình ảnh...',
                           hintStyle: TextStyle(color: NebulaTheme.textSubtle, fontSize: 14),
                           border: InputBorder.none,
@@ -223,7 +223,7 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close, color: NebulaTheme.textSubtle, size: 18),
+                      icon: Icon(Icons.close, color: NebulaTheme.textSubtle, size: 18),
                       onPressed: () {
                         _imageController.clear();
                         setState(() => _showImageField = false);
@@ -242,7 +242,7 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
               height: 52,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   colors: [NebulaTheme.primary, NebulaTheme.secondary],
                 ),
                 boxShadow: [
