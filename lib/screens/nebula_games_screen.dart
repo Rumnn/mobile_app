@@ -15,38 +15,55 @@ class NebulaGamesScreen extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
       children: [
-        Container(
-          height: 190,
-          decoration: NebulaTheme.glass(radius: BorderRadius.circular(26)).copyWith(
-            image: const DecorationImage(
-              image: NetworkImage(
-                'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1500&auto=format&fit=crop',
-              ),
-              fit: BoxFit.cover,
-            ),
-          ),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(26),
           child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(26),
-              gradient: LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [
-                  Colors.black.withValues(alpha: 0.6),
-                  Colors.transparent,
-                ],
-              ),
-            ),
-            child:       Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
+            height: 190,
+            decoration: NebulaTheme.glass(radius: BorderRadius.circular(26)),
+            child: Stack(
+              fit: StackFit.expand,
               children: [
-                _Chip(text: 'SỰ KIỆN MỚI'),
-                SizedBox(height: 8),
-                Text('Đại Chiến Ma Sói: Đêm Trăng Máu', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w700)),
-                SizedBox(height: 4),
-                Text('Tham gia ngay nhận x2 phần thưởng xu!', style: TextStyle(color: NebulaTheme.textSubtle)),
+                Image.network(
+                  'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1500&auto=format&fit=crop',
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          NebulaTheme.tertiary.withValues(alpha: 0.4),
+                          NebulaTheme.primary.withValues(alpha: 0.2),
+                          Colors.black.withValues(alpha: 0.5),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [
+                        Colors.black.withValues(alpha: 0.7),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      _Chip(text: 'SỰ KIỆN MỚI'),
+                      const SizedBox(height: 8),
+                      const Text('Đại Chiến Ma Sói: Đêm Trăng Máu', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w700)),
+                      const SizedBox(height: 4),
+                      Text('Tham gia ngay nhận x2 phần thưởng xu!', style: TextStyle(color: NebulaTheme.textSubtle)),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -65,7 +82,7 @@ class NebulaGamesScreen extends StatelessWidget {
             _GameCard(
               title: 'Sliding Puzzle',
               badge: '⚔️ VS',
-              image: 'https://images.unsplash.com/photo-1611996515756-1d31fc370c25?q=80&w=900&auto=format&fit=crop',
+              image: 'assets/images/sliding_puzzle.png',
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MultiplayerLobbyScreen())),
             ),
             _GameCard(
@@ -73,7 +90,7 @@ class NebulaGamesScreen extends StatelessWidget {
               image: 'https://images.unsplash.com/photo-1606167668584-78701c57f13d?q=80&w=900&auto=format&fit=crop',
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LudoScreen())),
             ),
-            const _GameCard(title: 'Ma Sói', image: 'https://images.unsplash.com/photo-1520637836862-4d197d17c50a?q=80&w=900&auto=format&fit=crop'),
+            const _GameCard(title: 'Ma Sói', image: 'assets/images/ma_soi.png'),
             const _GameCard(title: 'Vẽ và Đoán', image: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=900&auto=format&fit=crop'),
             const _GameCard(title: 'Đấu Nhạc', image: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=900&auto=format&fit=crop'),
             const _GameCard(title: 'Uno Online', image: 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=900&auto=format&fit=crop'),
@@ -119,44 +136,103 @@ class _GameCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        decoration: NebulaTheme.glass(radius: BorderRadius.circular(24)).copyWith(
-          image: DecorationImage(image: NetworkImage(image), fit: BoxFit.cover),
-        ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
         child: Container(
-          alignment: Alignment.bottomCenter,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            gradient: LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-              colors: [Colors.black.withValues(alpha: 0.55), Colors.transparent],
-            ),
-          ),
+          decoration: NebulaTheme.glass(radius: BorderRadius.circular(24)),
           child: Stack(
+            fit: StackFit.expand,
             children: [
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w700)),
-              ),
-              if (badge != null)
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: NebulaTheme.primary.withValues(alpha: 0.85),
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Text(
-                      badge!,
-                      style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800),
-                    ),
+              _buildImage(),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.7),
+                      Colors.transparent,
+                    ],
                   ),
                 ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Text(
+                        title,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    if (badge != null)
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: NebulaTheme.primary.withValues(alpha: 0.85),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(
+                            badge!,
+                            style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImage() {
+    final imageWidget = image.startsWith('http')
+        ? Image.network(
+            image,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => _buildFallback(),
+          )
+        : Image.asset(
+            image,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => _buildFallback(),
+          );
+    return imageWidget;
+  }
+
+  Widget _buildFallback() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            NebulaTheme.primary.withValues(alpha: 0.3),
+            NebulaTheme.surfaceHigh.withValues(alpha: 0.8),
+            Colors.black.withValues(alpha: 0.6),
+          ],
+        ),
+      ),
+      child: Center(
+        child: Opacity(
+          opacity: 0.15,
+          child: Icon(
+            Icons.sports_esports,
+            size: 64,
+            color: NebulaTheme.text,
           ),
         ),
       ),
@@ -177,18 +253,36 @@ class _RoomTile extends StatelessWidget {
       decoration: NebulaTheme.glass(),
       child: Row(
         children: [
-          CircleAvatar(radius: 24, backgroundImage: NetworkImage(image)),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: SizedBox(
+              width: 48,
+              height: 48,
+              child: Image.network(
+                image,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  color: NebulaTheme.primary.withValues(alpha: 0.15),
+                  alignment: Alignment.center,
+                  child: Text(
+                    title.isNotEmpty ? title.substring(0, 1).toUpperCase() : 'R',
+                    style: TextStyle(color: NebulaTheme.primary, fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+              ),
+            ),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(title, style:       TextStyle(color: NebulaTheme.text, fontWeight: FontWeight.w700)),
-              Text(subtitle, style:       TextStyle(color: NebulaTheme.textSubtle, fontSize: 12)),
+              Text(title, style: TextStyle(color: NebulaTheme.text, fontWeight: FontWeight.w700)),
+              Text(subtitle, style: TextStyle(color: NebulaTheme.textSubtle, fontSize: 12)),
             ]),
           ),
           FilledButton(
             onPressed: () {},
             style: FilledButton.styleFrom(backgroundColor: NebulaTheme.primary.withValues(alpha: 0.22)),
-            child:       Text('Vào phòng', style: TextStyle(color: NebulaTheme.primary)),
+            child: Text('Vào phòng', style: TextStyle(color: NebulaTheme.primary)),
           ),
         ],
       ),
