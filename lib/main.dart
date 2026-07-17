@@ -5,6 +5,7 @@ import 'providers/auth_provider.dart';
 import 'providers/post_provider.dart';
 import 'providers/user_provider.dart';
 import 'providers/settings_provider.dart';
+import 'providers/message_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/nebula_shell_screen.dart';
 import 'widgets/nebula_theme.dart';
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()..init()),
         ChangeNotifierProvider(create: (_) => PostProvider()),
+        ChangeNotifierProvider(create: (_) => MessageProvider()..initSocketListeners()),
       ],
       child: const _AppBuilder(),
     );

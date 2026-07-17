@@ -1,17 +1,84 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/settings_provider.dart';
-import '../widgets/nebula_theme.dart';
 
-class NebulaMessageScreen extends StatelessWidget {
+import '../providers/auth_provider.dart';
+import '../providers/message_provider.dart';
+import '../providers/settings_provider.dart';
+import '../providers/user_provider.dart';
+import '../widgets/nebula_theme.dart';
+import 'chat_detail_screen.dart';
+
+class NebulaMessageScreen extends StatefulWidget {
   const NebulaMessageScreen({super.key});
+
+  @override
+  State<NebulaMessageScreen> createState() => _NebulaMessageScreenState();
+}
+
+class _NebulaMessageScreenState extends State<NebulaMessageScreen> {
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<MessageProvider>().fetchConversations();
+      context.read<UserProvider>().fetchFriends();
+    });
+  }
+
+  String _formatTime(DateTime time) {
+    final now = DateTime.now();
+    final diff = now.difference(time);
+    if (diff.inDays == 0) {
+      final hour = time.hour.toString().padLeft(2, '0');
+      final minute = time.minute.toString().padLeft(2, '0');
+      return '$hour:$minute';
+    } else if (diff.inDays == 1) {
+      return 'Hôm qua';
+    } else if (diff.inDays < 7) {
+      switch (time.weekday) {
+        case DateTime.monday:
+          return 'Thứ 2';
+        case DateTime.tuesday:
+          return 'Thứ 3';
+        case DateTime.wednesday:
+          return 'Thứ 4';
+        case DateTime.thursday:
+          return 'Thứ 5';
+        case DateTime.friday:
+          return 'Thứ 6';
+        case DateTime.saturday:
+          return 'Thứ 7';
+        default:
+          return 'Chủ Nhật';
+      }
+    }
+    return '${time.day}/${time.month}/${time.year}';
+  }
 
   @override
   Widget build(BuildContext context) {
     context.watch<SettingsProvider>();
+    final myUser = context.watch<AuthProvider>().currentUser;
+    final userProvider = context.watch<UserProvider>();
+    final messageProvider = context.watch<MessageProvider>();
+
+    // 1. Filter online users / user list to chat with (excluding self)
+    final filteredUsers = userProvider.friends.where((user) {
+      final isSelf = user.id == myUser?.id;
+      final matchesSearch = user.username.toLowerCase().contains(_searchQuery.toLowerCase());
+      return !isSelf && matchesSearch;
+    }).toList();
+
+    // 2. Filter existing conversations
+    final filteredConversations = messageProvider.conversations.where((conv) {
+      return conv.user.username.toLowerCase().contains(_searchQuery.toLowerCase());
+    }).toList();
+
     return Column(
       children: [
-        // Search & Top Actions
+        // Search bar
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
           child: Row(
@@ -25,246 +92,212 @@ class NebulaMessageScreen extends StatelessWidget {
                     border: Border.all(color: NebulaTheme.text.withValues(alpha: 0.08)),
                   ),
                   child: TextField(
+                    onChanged: (v) => setState(() => _searchQuery = v),
                     style: TextStyle(color: NebulaTheme.text),
                     decoration: InputDecoration(
-                      hintText: 'Search friends or groups...',
+                      hintText: 'Tìm kiếm bạn bè...',
                       hintStyle: TextStyle(color: NebulaTheme.textSubtle.withValues(alpha: 0.5)),
-                      prefixIcon:       Icon(Icons.search, color: NebulaTheme.primary, size: 20),
+                      prefixIcon: Icon(Icons.search, color: NebulaTheme.primary, size: 20),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
-              Container(
-                decoration: BoxDecoration(
-                  color: NebulaTheme.primary.withOpacity(0.2),
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                  icon:       Icon(Icons.group_add, color: NebulaTheme.primary),
-                  onPressed: () {},
-                ),
-              ),
             ],
           ),
         ),
 
-        // Online Friends (Horizontal Scroll)
+        // User list (Horizontal Scroll)
         SizedBox(
-          height: 100,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            itemCount: 8,
-            itemBuilder: (context, index) {
-              final isOnline = index % 3 != 0;
-              return Padding(
-                padding: const EdgeInsets.only(right: 16),
-                child: Column(
-                  children: [
-                    Stack(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: isOnline ? NebulaTheme.tertiary : Colors.transparent, width: 2),
-                          ),
-                          child: CircleAvatar(
-                            radius: 26,
-                            backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=${index + 10}'),
-                          ),
-                        ),
-                        if (isOnline)
-                          Positioned(
-                            bottom: 2,
-                            right: 2,
-                            child: Container(
-                              width: 14,
-                              height: 14,
-                              decoration: BoxDecoration(
-                                color: Colors.greenAccent,
-                                shape: BoxShape.circle,
-                                border: Border.all(color: NebulaTheme.background, width: 2),
+          height: 105,
+          child: userProvider.isLoading && userProvider.friends.isEmpty
+              ? Center(
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: NebulaTheme.primary),
+                  ),
+                )
+              : filteredUsers.isEmpty
+                  ? Center(
+                      child: Text(
+                        'Không tìm thấy bạn bè',
+                        style: TextStyle(color: NebulaTheme.textSubtle, fontSize: 12),
+                      ),
+                    )
+                  : ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      itemCount: filteredUsers.length,
+                      itemBuilder: (context, index) {
+                        final user = filteredUsers[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ChatDetailScreen(partner: user),
                               ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 16),
+                            child: Column(
+                              children: [
+                                CircleAvatar(
+                                  radius: 26,
+                                  backgroundImage: NetworkImage(
+                                    user.avatarURL.isNotEmpty
+                                        ? user.avatarURL
+                                        : 'https://i.pravatar.cc/150?img=${index + 10}',
+                                  ),
+                                  onBackgroundImageError: (_, __) {},
+                                ),
+                                const SizedBox(height: 5),
+                                SizedBox(
+                                  width: 60,
+                                  child: Text(
+                                    user.username,
+                                    style: TextStyle(color: NebulaTheme.text, fontSize: 11),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                      ],
+                        );
+                      },
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'User ${index + 1}',
-                      style:       TextStyle(color: NebulaTheme.text, fontSize: 11),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
         ),
 
         Divider(color: NebulaTheme.text.withValues(alpha: 0.08), height: 1),
 
         // Recent Chats List
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-            itemCount: _mockChats.length,
-            itemBuilder: (context, index) {
-              final chat = _mockChats[index];
-              final isGroup = chat['isGroup'] == true;
-              final hasUnread = (chat['unread'] as int) > 0;
-
-              return ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                onTap: () {},
-                leading: Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 28,
-                      backgroundColor: isGroup ? NebulaTheme.secondary.withOpacity(0.2) : Colors.transparent,
-                      backgroundImage: isGroup ? null : NetworkImage(chat['avatar']),
-                      child: isGroup ?       Icon(Icons.groups, color: NebulaTheme.secondary) : null,
-                    ),
-                    if (isGroup && chat['members'] != null)
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: NebulaTheme.background,
-                          child: CircleAvatar(
-                            radius: 8,
-                            backgroundImage: NetworkImage((chat['members'] as List)[0]),
-                          ),
+          child: messageProvider.isLoadingConversations && messageProvider.conversations.isEmpty
+              ? Center(
+                  child: CircularProgressIndicator(color: NebulaTheme.primary),
+                )
+              : filteredConversations.isEmpty
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.chat_bubble_outline_rounded,
+                          color: NebulaTheme.textSubtle.withValues(alpha: 0.4),
+                          size: 48,
                         ),
-                      ),
-                  ],
-                ),
-                title: Text(
-                  chat['name'],
-                  style: TextStyle(
-                    color: NebulaTheme.text,
-                    fontWeight: hasUnread ? FontWeight.bold : FontWeight.w500,
-                    fontSize: 16,
-                  ),
-                ),
-                subtitle: Row(
-                  children: [
-                    if (chat['isTyping'] == true)
-                            Text('Typing...', style: TextStyle(color: NebulaTheme.tertiary, fontStyle: FontStyle.italic))
-                    else
-                      Expanded(
-                        child: Text(
-                          chat['lastMessage'],
-                          style: TextStyle(color: hasUnread ? NebulaTheme.text : NebulaTheme.textSubtle),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                  ],
-                ),
-                trailing: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      chat['time'],
-                      style: TextStyle(
-                        color: hasUnread ? NebulaTheme.primary : NebulaTheme.textSubtle,
-                        fontSize: 12,
-                        fontWeight: hasUnread ? FontWeight.bold : FontWeight.normal,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    if (hasUnread)
-                      Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration:       BoxDecoration(
-                          color: NebulaTheme.primary,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Text(
-                          '${chat['unread']}',
+                        const SizedBox(height: 12),
+                        Text(
+                          'Chưa có cuộc trò chuyện nào',
                           style: TextStyle(
-                            color: NebulaTheme.primary.computeLuminance() > 0.5 ? Colors.black : Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                            color: NebulaTheme.textSubtle,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Hãy chọn một người bạn ở trên để bắt đầu nhắn tin',
+                          style: TextStyle(
+                            color: NebulaTheme.textSubtle.withValues(alpha: 0.7),
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    )
+                  : RefreshIndicator(
+                      onRefresh: () => messageProvider.fetchConversations(),
+                      color: NebulaTheme.primary,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                        itemCount: filteredConversations.length,
+                        itemBuilder: (context, index) {
+                          final conv = filteredConversations[index];
+                          final hasUnread = conv.unread > 0;
+
+                          return ListTile(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => ChatDetailScreen(partner: conv.user),
+                                ),
+                              );
+                            },
+                            leading: CircleAvatar(
+                              radius: 28,
+                              backgroundImage: NetworkImage(
+                                conv.user.avatarURL.isNotEmpty
+                                    ? conv.user.avatarURL
+                                    : 'https://i.pravatar.cc/150?img=12',
+                              ),
+                              onBackgroundImageError: (_, __) {},
+                            ),
+                            title: Text(
+                              conv.user.username,
+                              style: TextStyle(
+                                color: NebulaTheme.text,
+                                fontWeight: hasUnread ? FontWeight.w800 : FontWeight.w600,
+                                fontSize: 15,
+                              ),
+                            ),
+                            subtitle: Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Text(
+                                conv.lastMessage,
+                                style: TextStyle(
+                                  color: hasUnread ? NebulaTheme.text : NebulaTheme.textSubtle,
+                                  fontWeight: hasUnread ? FontWeight.w700 : FontWeight.normal,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            trailing: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  _formatTime(conv.time),
+                                  style: TextStyle(
+                                    color: hasUnread ? NebulaTheme.primary : NebulaTheme.textSubtle,
+                                    fontSize: 11,
+                                    fontWeight: hasUnread ? FontWeight.bold : FontWeight.normal,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                if (hasUnread)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: NebulaTheme.primary,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Text(
+                                      '${conv.unread}',
+                                      style: TextStyle(
+                                        color: NebulaTheme.primary.computeLuminance() > 0.5
+                                            ? Colors.black
+                                            : Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
-                  ],
-                ),
-              );
-            },
-          ),
+                    ),
         ),
       ],
     );
   }
 }
-
-// Mock data for the social messaging UI
-final List<Map<String, dynamic>> _mockChats = [
-  {
-    'name': 'Gamer Guild (SG)',
-    'avatar': '',
-    'isGroup': true,
-    'members': ['https://i.pravatar.cc/150?img=11'],
-    'lastMessage': 'ShadowNinja: Anyone up for a raid tonight?',
-    'time': '10:42 AM',
-    'unread': 3,
-    'isTyping': false,
-  },
-  {
-    'name': 'ZenMaster',
-    'avatar': 'https://i.pravatar.cc/150?img=12',
-    'isGroup': false,
-    'lastMessage': 'GG wp!',
-    'time': '09:15 AM',
-    'unread': 1,
-    'isTyping': false,
-  },
-  {
-    'name': 'CyberX',
-    'avatar': 'https://i.pravatar.cc/150?img=13',
-    'isGroup': false,
-    'lastMessage': 'Are you going to the tournament?',
-    'time': 'Yesterday',
-    'unread': 0,
-    'isTyping': true,
-  },
-  {
-    'name': 'League of Legends VN',
-    'avatar': '',
-    'isGroup': true,
-    'members': ['https://i.pravatar.cc/150?img=14'],
-    'lastMessage': 'Admin: Patch notes v14.2 are out.',
-    'time': 'Yesterday',
-    'unread': 0,
-    'isTyping': false,
-  },
-  {
-    'name': 'MoonLight',
-    'avatar': 'https://i.pravatar.cc/150?img=15',
-    'isGroup': false,
-    'lastMessage': 'Thanks for the gift! 🎁',
-    'time': 'Mon',
-    'unread': 0,
-    'isTyping': false,
-  },
-  {
-    'name': 'DarkVader99',
-    'avatar': 'https://i.pravatar.cc/150?img=16',
-    'isGroup': false,
-    'lastMessage': 'Let\'s play duo tomorrow',
-    'time': 'Sun',
-    'unread': 0,
-    'isTyping': false,
-  },
-];

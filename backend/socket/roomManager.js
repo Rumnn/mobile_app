@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Message = require("../models/Message");
+const Follow = require("../models/Follow");
 
 // In-memory room storage
 // Key: roomCode (4 uppercase characters)
@@ -98,6 +100,9 @@ function initSocketIO(io) {
 
   io.on("connection", (socket) => {
     console.log(`User connected: ${socket.user.username} (Socket: ${socket.id})`);
+    
+    // Join personal user room to receive direct messages
+    socket.join(socket.user._id.toString());
 
     let currentRoomCode = null;
 
@@ -519,6 +524,52 @@ function initSocketIO(io) {
     // 7. Leave Room manually
     socket.on("leave_room", () => {
       handleLeaveRoom();
+    });
+
+    // 11. Send direct message
+    socket.on("send_direct_message", async (data) => {
+      try {
+        const { receiverId, content } = data;
+        if (!receiverId || !content || !content.trim()) return;
+
+        // Verify mutual follow (friendship)
+        const followsReceiver = await Follow.findOne({ follower: socket.user._id, following: receiverId });
+        const followsSender = await Follow.findOne({ follower: receiverId, following: socket.user._id });
+
+        if (!followsReceiver || !followsSender) {
+          return socket.emit("error_message", "Hai người cần phải kết bạn (theo dõi nhau) mới có thể nhắn tin.");
+        }
+
+        const newMessage = await Message.create({
+          sender: socket.user._id,
+          receiver: receiverId,
+          content: content.trim(),
+          read: false
+        });
+
+        const populatedMessage = await Message.findById(newMessage._id)
+          .populate("sender", "username avatarURL")
+          .populate("receiver", "username avatarURL");
+
+        // Emit to receiver's room
+        io.to(receiverId).emit("new_direct_message", populatedMessage);
+        // Emit back to sender (so other tabs/devices of the same user sync)
+        socket.emit("new_direct_message", populatedMessage);
+      } catch (err) {
+        console.error("send_direct_message error:", err);
+      }
+    });
+
+    // 12. Direct message typing indicator
+    socket.on("typing", (data) => {
+      // data: { receiverId, isTyping }
+      const { receiverId, isTyping } = data;
+      if (!receiverId) return;
+
+      io.to(receiverId).emit("typing_status", {
+        senderId: socket.user._id.toString(),
+        isTyping: !!isTyping
+      });
     });
 
     // 8. Disconnect

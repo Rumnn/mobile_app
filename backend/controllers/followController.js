@@ -128,10 +128,36 @@ const checkFollowing = async (req, res, next) => {
   }
 };
 
+const getFriends = async (req, res, next) => {
+  try {
+    const currentUserId = req.user._id;
+
+    // Find all users followed by current user
+    const followingList = await Follow.find({ follower: currentUserId }).select("following");
+    const followingIds = followingList.map((f) => f.following.toString());
+
+    // Find all users who follow current user
+    const followersList = await Follow.find({ following: currentUserId }).select("follower");
+    const followerIds = followersList.map((f) => f.follower.toString());
+
+    // Find the intersection (mutual followers)
+    const friendIds = followingIds.filter((id) => followerIds.includes(id));
+
+    // Fetch details of mutual friends
+    const friends = await User.find({ _id: { $in: friendIds } }).select("username avatarURL level winRate totalGames role");
+
+    return sendResponse(res, 200, true, "Friends list fetched successfully", { friends });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 module.exports = {
   follow,
   unfollow,
   getFollowers,
   getFollowing,
   checkFollowing,
+  getFriends,
 };
+

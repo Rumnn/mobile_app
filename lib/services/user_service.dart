@@ -20,6 +20,13 @@ class UserService {
     return usersJson.map((e) => UserModel.fromJson(e as Map<String, dynamic>)).toList();
   }
 
+  Future<List<UserModel>> getFriends() async {
+    final envelope = await _api.get('/users/friends');
+    final data = (envelope['data'] as Map<String, dynamic>?) ?? {};
+    final friendsJson = (data['friends'] as List<dynamic>?) ?? const [];
+    return friendsJson.map((e) => UserModel.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
   Future<UserModel> getUserById(String id) async {
     final envelope = await _api.get('/users/$id');
     final data = (envelope['data'] as Map<String, dynamic>?) ?? {};

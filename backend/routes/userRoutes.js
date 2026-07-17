@@ -1,12 +1,13 @@
 const express = require("express");
 const { createUser, getUsers, getUserById, updateUser, deleteUser } = require("../controllers/userController");
-const { follow, unfollow, getFollowers, getFollowing, checkFollowing } = require("../controllers/followController");
+const { follow, unfollow, getFollowers, getFollowing, checkFollowing, getFriends } = require("../controllers/followController");
 const protect = require("../middlewares/authMiddleware");
 const authorizeRoles = require("../middlewares/roleMiddleware");
 
 const router = express.Router();
 
 router.get("/", protect, getUsers);
+router.get("/friends", protect, getFriends);
 router.get("/:id", protect, getUserById);
 router.post("/", protect, authorizeRoles("admin"), createUser);
 router.put("/:id", protect, updateUser);

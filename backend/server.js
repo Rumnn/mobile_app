@@ -12,6 +12,8 @@ const http = require("http");
 const { Server } = require("socket.io");
 const { initSocketIO } = require("./socket/roomManager");
 
+const messageRoutes = require("./routes/messageRoutes");
+
 dotenv.config();
 connectDB();
 
@@ -31,6 +33,7 @@ app.get("/", (req, res) => {
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
+app.use("/messages", messageRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

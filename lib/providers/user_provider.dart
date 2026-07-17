@@ -9,10 +9,12 @@ class UserProvider extends ChangeNotifier {
   UserProvider({UserService? userService}) : _userService = userService ?? UserService();
 
   List<UserModel> _users = const [];
+  List<UserModel> _friends = const [];
   bool _isLoading = false;
   String? _error;
 
   List<UserModel> get users => _users;
+  List<UserModel> get friends => _friends;
   bool get isLoading => _isLoading;
   String? get error => _error;
 
@@ -21,6 +23,19 @@ class UserProvider extends ChangeNotifier {
     try {
       _error = null;
       _users = await _userService.getUsers();
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  Future<void> fetchFriends() async {
+    _setLoading(true);
+    try {
+      _error = null;
+      _friends = await _userService.getFriends();
     } catch (e) {
       _error = e.toString();
       rethrow;
