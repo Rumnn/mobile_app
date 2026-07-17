@@ -15,6 +15,14 @@ class NebulaProfileScreen extends StatefulWidget {
 }
 
 class _NebulaProfileScreenState extends State<NebulaProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<UserProvider>().fetchFriends().catchError((_) {});
+    });
+  }
+
   Future<void> _openEditProfileDialog() async {
     final auth = context.read<AuthProvider>();
     final user = auth.currentUser;
@@ -93,6 +101,7 @@ class _NebulaProfileScreenState extends State<NebulaProfileScreen> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
     final settings = context.watch<SettingsProvider>();
+    final userProvider = context.watch<UserProvider>();
     final user = auth.currentUser;
 
     if (user == null) {
@@ -131,7 +140,7 @@ class _NebulaProfileScreenState extends State<NebulaProfileScreen> {
                 children: [
                   _Stat(title: '${user.winRate}%', subtitle: settings.getText('win_rate')),
                   _Stat(title: '${user.totalGames}', subtitle: settings.getText('games_played')),
-                  _Stat(title: '0', subtitle: settings.getText('friends')),
+                  _Stat(title: '${userProvider.friends.length}', subtitle: settings.getText('friends')),
                 ],
               ),
               const SizedBox(height: 14),

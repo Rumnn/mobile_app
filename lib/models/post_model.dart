@@ -5,6 +5,7 @@ class PostModel {
   final String authorAvatar;
   final String content;
   final String imageURL;
+  final String videoURL;
   int likesCount;
   int commentsCount;
   bool isLiked;
@@ -17,6 +18,7 @@ class PostModel {
     required this.authorAvatar,
     required this.content,
     this.imageURL = '',
+    this.videoURL = '',
     this.likesCount = 0,
     this.commentsCount = 0,
     this.isLiked = false,
@@ -44,6 +46,7 @@ class PostModel {
       authorAvatar: authorAvatar,
       content: (json['content'] ?? '') as String,
       imageURL: (json['imageURL'] ?? '') as String,
+      videoURL: (json['videoURL'] ?? '') as String,
       likesCount: (json['likesCount'] ?? 0) as int,
       commentsCount: (json['commentsCount'] ?? 0) as int,
       isLiked: (json['isLiked'] ?? false) as bool,
@@ -57,11 +60,13 @@ class PostModel {
         '_id': id,
         'content': content,
         'imageURL': imageURL,
+        'videoURL': videoURL,
       };
 
   PostModel copyWith({
     String? content,
     String? imageURL,
+    String? videoURL,
     int? likesCount,
     int? commentsCount,
     bool? isLiked,
@@ -73,6 +78,7 @@ class PostModel {
       authorAvatar: authorAvatar,
       content: content ?? this.content,
       imageURL: imageURL ?? this.imageURL,
+      videoURL: videoURL ?? this.videoURL,
       likesCount: likesCount ?? this.likesCount,
       commentsCount: commentsCount ?? this.commentsCount,
       isLiked: isLiked ?? this.isLiked,

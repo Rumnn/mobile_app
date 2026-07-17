@@ -16,20 +16,22 @@ class PostService {
         .toList();
   }
 
-  Future<PostModel> createPost(String content, {String? imageURL}) async {
+  Future<PostModel> createPost(String content, {String? imageURL, String? videoURL}) async {
     final envelope = await _api.post('/posts', body: {
       'content': content,
       if (imageURL != null && imageURL.isNotEmpty) 'imageURL': imageURL,
+      if (videoURL != null && videoURL.isNotEmpty) 'videoURL': videoURL,
     });
     final data = (envelope['data'] as Map<String, dynamic>?) ?? {};
     final postJson = (data['post'] as Map<String, dynamic>?) ?? {};
     return PostModel.fromJson(postJson);
   }
 
-  Future<PostModel> updatePost(String id, {String? content, String? imageURL}) async {
+  Future<PostModel> updatePost(String id, {String? content, String? imageURL, String? videoURL}) async {
     final body = <String, dynamic>{};
     if (content != null) body['content'] = content;
     if (imageURL != null) body['imageURL'] = imageURL;
+    if (videoURL != null) body['videoURL'] = videoURL;
 
     final envelope = await _api.put('/posts/$id', body: body);
     final data = (envelope['data'] as Map<String, dynamic>?) ?? {};

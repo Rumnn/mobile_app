@@ -1,9 +1,31 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 import 'app_config.dart';
 import 'token_storage.dart';
+
+/// Determine the MediaType from a filename extension.
+MediaType _mediaTypeOf(String filename) {
+  final ext = filename.split('.').last.toLowerCase();
+  const types = {
+    'jpg': 'image/jpeg',
+    'jpeg': 'image/jpeg',
+    'png': 'image/png',
+    'gif': 'image/gif',
+    'webp': 'image/webp',
+    'mp4': 'video/mp4',
+    'mov': 'video/quicktime',
+    'avi': 'video/x-msvideo',
+    'mkv': 'video/x-matroska',
+    'webm': 'video/webm',
+  };
+  final mime = types[ext] ?? 'application/octet-stream';
+  final parts = mime.split('/');
+  return MediaType(parts[0], parts[1]);
+}
 
 class ApiException implements Exception {
   final String message;
@@ -93,6 +115,32 @@ class ApiClient {
     final res = await _http.delete(_uri(path), headers: await _headers());
     final envelope = _decodeBody(res.body);
     _ensureSuccessEnvelope(envelope, res.statusCode);
+    return envelope;
+  }
+
+  /// Upload raw bytes via multipart/form-data.
+  /// Works on Flutter Web AND mobile (no dart:io File needed).
+  Future<Map<String, dynamic>> uploadBytes(
+    String apiPath,
+    Uint8List bytes,
+    String filename, {
+    String field = 'file',
+  }) async {
+    final token = await _tokenStorage.getToken();
+    final request = http.MultipartRequest('POST', _uri(apiPath));
+    if (token != null && token.isNotEmpty) {
+      request.headers['Authorization'] = 'Bearer $token';
+    }
+    request.files.add(http.MultipartFile.fromBytes(
+      field,
+      bytes,
+      filename: filename,
+      contentType: _mediaTypeOf(filename),
+    ));
+    final streamed = await request.send();
+    final body = await streamed.stream.bytesToString();
+    final envelope = _decodeBody(body);
+    _ensureSuccessEnvelope(envelope, streamed.statusCode);
     return envelope;
   }
 }

@@ -11,7 +11,7 @@ const COMMENTS_PER_PAGE = 20;
 
 const createPost = async (req, res, next) => {
   try {
-    const { content, imageURL } = req.body;
+    const { content, imageURL, videoURL } = req.body;
     if (!content || !content.trim()) {
       return sendResponse(res, 400, false, "Post content is required", {});
     }
@@ -20,15 +20,23 @@ const createPost = async (req, res, next) => {
       author: req.user._id,
       content: content.trim(),
       imageURL: imageURL || "",
+      videoURL: videoURL || "",
     });
 
     const populated = await post.populate("author", "username avatarURL");
 
+    const createdPost = {
+      ...populated.toObject(),
+      isLiked: false,
+    };
+
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("post_created", { post: createdPost });
+    }
+
     return sendResponse(res, 201, true, "Post created successfully", {
-      post: {
-        ...populated.toObject(),
-        isLiked: false,
-      },
+      post: createdPost,
     });
   } catch (error) {
     return next(error);
@@ -121,17 +129,25 @@ const updatePost = async (req, res, next) => {
       return sendResponse(res, 403, false, "Forbidden: cannot edit this post", {});
     }
 
-    const { content, imageURL } = req.body;
+    const { content, imageURL, videoURL } = req.body;
     if (content !== undefined) post.content = content.trim();
     if (imageURL !== undefined) post.imageURL = imageURL;
+    if (videoURL !== undefined) post.videoURL = videoURL;
 
     await post.save();
     await post.populate("author", "username avatarURL");
 
     const liked = await Like.exists({ post: id, user: req.user._id });
 
+    const updatedPost = { ...post.toObject(), isLiked: !!liked };
+
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("post_updated", { post: updatedPost });
+    }
+
     return sendResponse(res, 200, true, "Post updated successfully", {
-      post: { ...post.toObject(), isLiked: !!liked },
+      post: updatedPost,
     });
   } catch (error) {
     return next(error);
@@ -163,6 +179,11 @@ const deletePost = async (req, res, next) => {
       post.deleteOne(),
     ]);
 
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("post_deleted", { postId: id });
+    }
+
     return sendResponse(res, 200, true, "Post deleted successfully", {});
   } catch (error) {
     return next(error);
@@ -189,6 +210,12 @@ const toggleLike = async (req, res, next) => {
       await existing.deleteOne();
       post.likesCount = Math.max(post.likesCount - 1, 0);
       await post.save();
+
+      const io = req.app.get("io");
+      if (io) {
+        io.emit("post_likes_updated", { postId: id, likesCount: post.likesCount });
+      }
+
       return sendResponse(res, 200, true, "Post unliked", {
         isLiked: false,
         likesCount: post.likesCount,
@@ -198,6 +225,11 @@ const toggleLike = async (req, res, next) => {
     await Like.create({ post: id, user: req.user._id });
     post.likesCount += 1;
     await post.save();
+
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("post_likes_updated", { postId: id, likesCount: post.likesCount });
+    }
 
     return sendResponse(res, 200, true, "Post liked", {
       isLiked: true,
@@ -268,6 +300,15 @@ const addComment = async (req, res, next) => {
 
     const populated = await comment.populate("author", "username avatarURL");
 
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("comment_added", {
+        postId: id,
+        comment: populated.toObject(),
+        commentsCount: post.commentsCount,
+      });
+    }
+
     return sendResponse(res, 201, true, "Comment added successfully", {
       comment: populated.toObject(),
       commentsCount: post.commentsCount,
@@ -301,6 +342,15 @@ const deleteComment = async (req, res, next) => {
     if (post) {
       post.commentsCount = Math.max(post.commentsCount - 1, 0);
       await post.save();
+    }
+
+    const io = req.app.get("io");
+    if (io) {
+      io.emit("comment_deleted", {
+        postId: id,
+        commentId,
+        commentsCount: post ? post.commentsCount : 0,
+      });
     }
 
     return sendResponse(res, 200, true, "Comment deleted successfully", {

@@ -22,20 +22,37 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   final _scrollCtrl = ScrollController();
   Timer? _typingDebounce;
   bool _isTyping = false;
+  int _prevMessageCount = 0;
 
   @override
   void initState() {
     super.initState();
     final messageProvider = context.read<MessageProvider>();
+
+    // Listen to provider changes — scroll to bottom when new messages arrive
+    messageProvider.addListener(_onMessagesChanged);
     
     // Set active chat user and fetch message history
     WidgetsBinding.instance.addPostFrameCallback((_) {
       messageProvider.setActiveChatUser(widget.partner.id);
-      messageProvider.fetchMessagesWithUser(widget.partner.id).then((_) => _scrollToBottom());
+      messageProvider.fetchMessagesWithUser(widget.partner.id).then((_) {
+        _prevMessageCount = messageProvider.messages.length;
+        _scrollToBottom();
+      });
     });
 
     _textCtrl.addListener(_onTextChanged);
     SocketService.instance.on('error_message', _onErrorMessage);
+  }
+
+  void _onMessagesChanged() {
+    final messageProvider = context.read<MessageProvider>();
+    final newCount = messageProvider.messages.length;
+    if (newCount > _prevMessageCount) {
+      _prevMessageCount = newCount;
+      // Give the list time to render the new item, then scroll
+      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    }
   }
 
   void _onErrorMessage(dynamic msg) {
@@ -50,6 +67,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   @override
   void dispose() {
+    context.read<MessageProvider>().removeListener(_onMessagesChanged);
     _textCtrl.removeListener(_onTextChanged);
     _textCtrl.dispose();
     _scrollCtrl.dispose();
@@ -110,13 +128,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     final messageProvider = context.watch<MessageProvider>();
     final myId = context.watch<AuthProvider>().currentUser?.id ?? '';
     final opponentTyping = messageProvider.isOpponentTyping;
-
-    // Trigger auto-scroll on new message list build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (messageProvider.messages.isNotEmpty) {
-        _scrollToBottom();
-      }
-    });
 
     return Scaffold(
       backgroundColor: NebulaTheme.background,

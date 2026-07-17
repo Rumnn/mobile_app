@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Message = require("../models/Message");
 const Follow = require("../models/Follow");
+const CommunityMessage = require("../models/CommunityMessage");
 
 // In-memory room storage
 // Key: roomCode (4 uppercase characters)
@@ -548,8 +549,8 @@ function initSocketIO(io) {
         });
 
         const populatedMessage = await Message.findById(newMessage._id)
-          .populate("sender", "username avatarURL")
-          .populate("receiver", "username avatarURL");
+          .populate("sender", "_id username avatarURL")
+          .populate("receiver", "_id username avatarURL");
 
         // Emit to receiver's room
         io.to(receiverId).emit("new_direct_message", populatedMessage);
@@ -570,6 +571,49 @@ function initSocketIO(io) {
         senderId: socket.user._id.toString(),
         isTyping: !!isTyping
       });
+    });
+
+    // 13. Community Chat Room
+    socket.on("join_community", async () => {
+      socket.join("community");
+      console.log(`${socket.user.username} joined community chat`);
+      try {
+        // Fetch last 50 community messages
+        const history = await CommunityMessage.find()
+          .sort({ createdAt: -1 })
+          .limit(50)
+          .populate("sender", "_id username avatarURL")
+          .lean();
+        
+        // Return history reversed to match chronological order
+        socket.emit("community_history", history.reverse());
+      } catch (err) {
+        console.error("join_community error:", err);
+      }
+    });
+
+    socket.on("leave_community", () => {
+      socket.leave("community");
+      console.log(`${socket.user.username} left community chat`);
+    });
+
+    socket.on("send_community_message", async (data) => {
+      try {
+        const { content } = data;
+        if (!content || !content.trim()) return;
+
+        const newMessage = await CommunityMessage.create({
+          sender: socket.user._id,
+          content: content.trim(),
+        });
+
+        const populated = await CommunityMessage.findById(newMessage._id)
+          .populate("sender", "_id username avatarURL");
+
+        io.to("community").emit("new_community_message", populated);
+      } catch (err) {
+        console.error("send_community_message error:", err);
+      }
     });
 
     // 8. Disconnect

@@ -17,6 +17,10 @@ const postSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    videoURL: {
+      type: String,
+      default: "",
+    },
     likesCount: {
       type: Number,
       default: 0,

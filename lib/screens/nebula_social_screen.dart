@@ -1,11 +1,17 @@
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/comment_model.dart';
 import '../models/post_model.dart';
 import '../providers/auth_provider.dart';
 import '../providers/post_provider.dart';
 import '../services/follow_service.dart';
+import '../services/socket_service.dart';
+import '../services/upload_service.dart';
 import '../widgets/nebula_theme.dart';
 
 class NebulaSocialScreen extends StatefulWidget {
@@ -67,10 +73,11 @@ class _NebulaSocialScreenState extends State<NebulaSocialScreen> {
         itemBuilder: (context, index) {
           if (index == 0) {
             return _Composer(
-              onPost: (content, imageURL) async {
+              onPost: (content, imageURL, videoURL) async {
                 await context.read<PostProvider>().createPost(
                       content,
                       imageURL: imageURL,
+                      videoURL: videoURL,
                     );
               },
             );
@@ -97,7 +104,7 @@ class _NebulaSocialScreenState extends State<NebulaSocialScreen> {
 // ─── Composer ─────────────────────────────────────────────────
 
 class _Composer extends StatefulWidget {
-  final Future<void> Function(String content, String? imageURL) onPost;
+  final Future<void> Function(String content, String? imageURL, String? videoURL) onPost;
   const _Composer({required this.onPost});
 
   @override
@@ -106,22 +113,90 @@ class _Composer extends StatefulWidget {
 
 class _ComposerState extends State<_Composer> {
   final _controller = TextEditingController();
-  final _imageController = TextEditingController();
-  bool _showImageField = false;
+  final _uploadService = UploadService();
+
+  // Picked file data (bytes + name) — works on Web & Mobile
+  Uint8List? _imageBytes;
+  String? _imageName;
+  Uint8List? _videoBytes;
+  String? _videoName;
+
+  bool _isUploading = false;
   bool _isPosting = false;
+  String? _uploadError;
+
+  Future<void> _pickImage() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        withData: true, // always load bytes (needed for web)
+      );
+      if (result == null || result.files.isEmpty) return;
+      final file = result.files.first;
+      setState(() {
+        _imageBytes = file.bytes;
+        _imageName = file.name;
+        _videoBytes = null;
+        _videoName = null;
+        _uploadError = null;
+      });
+    } catch (e) {
+      setState(() => _uploadError = 'Không chọn được ảnh: $e');
+    }
+  }
+
+  Future<void> _pickVideo() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.video,
+        withData: true,
+      );
+      if (result == null || result.files.isEmpty) return;
+      final file = result.files.first;
+      setState(() {
+        _videoBytes = file.bytes;
+        _videoName = file.name;
+        _imageBytes = null;
+        _imageName = null;
+        _uploadError = null;
+      });
+    } catch (e) {
+      setState(() => _uploadError = 'Không chọn được video: $e');
+    }
+  }
 
   Future<void> _submit() async {
     if (_controller.text.trim().isEmpty || _isPosting) return;
-    setState(() => _isPosting = true);
-    await widget.onPost(
-      _controller.text,
-      _imageController.text.isNotEmpty ? _imageController.text : null,
-    );
+    setState(() { _isPosting = true; _uploadError = null; });
+
+    String? imageURL;
+    String? videoURL;
+
+    try {
+      if (_imageBytes != null && _imageName != null) {
+        setState(() => _isUploading = true);
+        imageURL = await _uploadService.uploadImage(_imageBytes!, _imageName!);
+        setState(() => _isUploading = false);
+      } else if (_videoBytes != null && _videoName != null) {
+        setState(() => _isUploading = true);
+        videoURL = await _uploadService.uploadVideo(_videoBytes!, _videoName!);
+        setState(() => _isUploading = false);
+      }
+    } catch (e) {
+      setState(() {
+        _isPosting = false;
+        _isUploading = false;
+        _uploadError = 'Upload thất bại: ${e.toString()}';
+      });
+      return;
+    }
+
+    await widget.onPost(_controller.text, imageURL, videoURL);
     _controller.clear();
-    _imageController.clear();
     setState(() {
       _isPosting = false;
-      _showImageField = false;
+      _imageBytes = null; _imageName = null;
+      _videoBytes = null; _videoName = null;
     });
     if (mounted) FocusScope.of(context).unfocus();
   }
@@ -129,7 +204,6 @@ class _ComposerState extends State<_Composer> {
   @override
   void dispose() {
     _controller.dispose();
-    _imageController.dispose();
     super.dispose();
   }
 
@@ -142,6 +216,7 @@ class _ComposerState extends State<_Composer> {
       padding: const EdgeInsets.all(14),
       decoration: NebulaTheme.glass(),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,8 +246,7 @@ class _ComposerState extends State<_Composer> {
                     decoration: InputDecoration(
                       hintText:
                           'Bạn đang nghĩ gì, ${user?.username ?? 'Gamer'}?',
-                      hintStyle:
-                          TextStyle(color: NebulaTheme.textSubtle),
+                      hintStyle: TextStyle(color: NebulaTheme.textSubtle),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 14),
@@ -182,87 +256,179 @@ class _ComposerState extends State<_Composer> {
               ),
             ],
           ),
-          if (_showImageField) ...[
-            const SizedBox(height: 8),
+          if (_imageBytes != null) ...[
+            const SizedBox(height: 10),
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: Image.memory(
+                    _imageBytes!,
+                    height: 180,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Positioned(
+                  top: 6, right: 6,
+                  child: GestureDetector(
+                    onTap: () => setState(() { _imageBytes = null; _imageName = null; }),
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(
+                        color: Colors.black54,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.close, color: Colors.white, size: 18),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+          if (_videoBytes != null) ...[
+            const SizedBox(height: 10),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
                 color: NebulaTheme.surfaceHigh,
                 borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: NebulaTheme.primary.withValues(alpha: 0.4)),
               ),
-              child: TextField(
-                controller: _imageController,
-                style: TextStyle(color: NebulaTheme.text, fontSize: 13),
-                decoration: InputDecoration(
-                  hintText: 'Dán URL hình ảnh...',
-                  hintStyle: TextStyle(color: NebulaTheme.textSubtle),
-                  border: InputBorder.none,
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                ),
+              child: Row(
+                children: [
+                  Icon(Icons.video_file_rounded, color: NebulaTheme.primary, size: 28),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _videoName ?? 'video',
+                          style: TextStyle(color: NebulaTheme.text, fontSize: 13,
+                              fontWeight: FontWeight.w600),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text('Video đã chọn • ${(_videoBytes!.length / (1024 * 1024)).toStringAsFixed(1)} MB',
+                            style: TextStyle(color: NebulaTheme.textSubtle, fontSize: 11)),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => setState(() { _videoBytes = null; _videoName = null; }),
+                    child: Icon(Icons.close, color: NebulaTheme.textSubtle, size: 20),
+                  ),
+                ],
               ),
             ),
           ],
+          if (_uploadError != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: Text(_uploadError!,
+                  style: const TextStyle(color: Colors.redAccent, fontSize: 12)),
+            ),
           const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
-                  InkWell(
-                    onTap: () =>
-                        setState(() => _showImageField = !_showImageField),
-                    borderRadius: BorderRadius.circular(8),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 4, vertical: 4),
-                      child: Row(
-                        children: [
-                          Icon(Icons.image_outlined,
-                              color: _showImageField
-                                  ? NebulaTheme.primary
-                                  : NebulaTheme.secondary,
-                              size: 20),
-                          const SizedBox(width: 4),
-                          Text('Ảnh',
-                              style: TextStyle(
-                                  color: _showImageField
-                                      ? NebulaTheme.primary
-                                      : NebulaTheme.secondary,
-                                  fontWeight: FontWeight.w600)),
-                        ],
-                      ),
-                    ),
+                  _ToolbarBtn(
+                    icon: Icons.image_outlined,
+                    label: 'Ảnh',
+                    active: _imageBytes != null,
+                    onTap: _pickImage,
+                  ),
+                  const SizedBox(width: 6),
+                  _ToolbarBtn(
+                    icon: Icons.video_library_outlined,
+                    label: 'Video',
+                    active: _videoBytes != null,
+                    onTap: _pickVideo,
                   ),
                 ],
               ),
               InkWell(
-                onTap: _isPosting ? null : _submit,
+                onTap: (_isPosting || _isUploading) ? null : _submit,
                 borderRadius: BorderRadius.circular(999),
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(999),
                     gradient: LinearGradient(
-                        colors: [Color(0xFFA078FF), Color(0xFFAA0266)]),
+                        colors: [NebulaTheme.primary, NebulaTheme.secondary]),
+                    boxShadow: [
+                      BoxShadow(
+                        color: NebulaTheme.primary.withValues(alpha: 0.35),
+                        blurRadius: 10, spreadRadius: -2,
+                      ),
+                    ],
                   ),
-                  child: _isPosting
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white),
+                  child: (_isPosting || _isUploading)
+                      ? Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(
+                              width: 16, height: 16,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: Colors.white),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              _isUploading ? 'Uploading...' : 'Đang đăng...',
+                              style: const TextStyle(color: Colors.white,
+                                  fontSize: 13, fontWeight: FontWeight.w700),
+                            ),
+                          ],
                         )
                       : const Text('Đăng',
                           style: TextStyle(
                               color: Colors.white,
-                              fontWeight: FontWeight.w700)),
+                              fontWeight: FontWeight.w800,
+                              fontSize: 14)),
                 ),
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ToolbarBtn extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
+  const _ToolbarBtn({
+    required this.icon,
+    required this.label,
+    required this.active,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = active ? NebulaTheme.primary : NebulaTheme.secondary;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 20),
+            const SizedBox(width: 4),
+            Text(label,
+                style: TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13)),
+          ],
+        ),
       ),
     );
   }
@@ -288,9 +454,43 @@ class _PostCardState extends State<_PostCard> {
   bool? _isFollowing;
 
   @override
+  void initState() {
+    super.initState();
+    // Listen for real-time comment addition and deletion
+    SocketService.instance.on('comment_added', _onCommentAdded);
+    SocketService.instance.on('comment_deleted', _onCommentDeleted);
+  }
+
+  @override
   void dispose() {
+    SocketService.instance.off('comment_added', _onCommentAdded);
+    SocketService.instance.off('comment_deleted', _onCommentDeleted);
     _commentCtrl.dispose();
     super.dispose();
+  }
+
+  void _onCommentAdded(dynamic data) {
+    if (data == null || data['postId'] != widget.post.id) return;
+    try {
+      final newComment = CommentModel.fromJson(Map<String, dynamic>.from(data['comment'] as Map));
+      if (mounted) {
+        setState(() {
+          if (!_comments.any((c) => c.id == newComment.id)) {
+            _comments.insert(0, newComment);
+          }
+        });
+      }
+    } catch (_) {}
+  }
+
+  void _onCommentDeleted(dynamic data) {
+    if (data == null || data['postId'] != widget.post.id) return;
+    final commentId = data['commentId']?.toString();
+    if (mounted) {
+      setState(() {
+        _comments.removeWhere((c) => c.id == commentId);
+      });
+    }
   }
 
   String _timeAgo(DateTime dt) {
@@ -332,16 +532,12 @@ class _PostCardState extends State<_PostCard> {
 
   Future<void> _submitComment() async {
     if (_commentCtrl.text.trim().isEmpty) return;
-    final comment = await context
-        .read<PostProvider>()
-        .addComment(widget.post.id, _commentCtrl.text.trim());
-    if (comment != null && mounted) {
-      setState(() {
-        _comments.insert(0, comment);
-      });
-      _commentCtrl.clear();
-      FocusScope.of(context).unfocus();
-    }
+    final text = _commentCtrl.text.trim();
+    _commentCtrl.clear();
+    FocusScope.of(context).unfocus();
+    // Only call API — the socket 'comment_added' event will add the comment to
+    // the list (with dedup) so we never insert it twice.
+    await context.read<PostProvider>().addComment(widget.post.id, text);
   }
 
   void _showPostMenu() {
@@ -564,6 +760,12 @@ class _PostCardState extends State<_PostCard> {
             ),
           ],
 
+          // ── Video
+          if (post.videoURL.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _VideoPreview(url: post.videoURL),
+          ],
+
           // ── Actions
           const SizedBox(height: 12),
           Row(
@@ -754,6 +956,147 @@ class _PostCardState extends State<_PostCard> {
               ],
             ),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Video Preview ─────────────────────────────────────────────
+
+class _VideoPreview extends StatelessWidget {
+  final String url;
+  const _VideoPreview({required this.url});
+
+  bool _isYoutube(String u) =>
+      u.contains('youtube.com') || u.contains('youtu.be');
+
+  String? _ytThumbnail(String u) {
+    final regExp = RegExp(
+        r'(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|v/|shorts/))([\w-]+)');
+    final match = regExp.firstMatch(u);
+    if (match != null) {
+      return 'https://img.youtube.com/vi/${match.group(1)}/hqdefault.jpg';
+    }
+    return null;
+  }
+
+  Future<void> _open(BuildContext context) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null) return;
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Không thể mở link video')),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final thumbnail = _isYoutube(url) ? _ytThumbnail(url) : null;
+
+    return GestureDetector(
+      onTap: () => _open(context),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            if (thumbnail != null)
+              Image.network(
+                thumbnail,
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (_, _a, _b) => _VideoPlaceholder(url: url),
+              )
+            else
+              _VideoPlaceholder(url: url),
+
+            // Gradient overlay
+            Container(
+              height: 200,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.65),
+                  ],
+                ),
+              ),
+            ),
+
+            // Play button
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.15),
+                border: Border.all(color: Colors.white60, width: 2),
+              ),
+              child: const Icon(
+                Icons.play_arrow_rounded,
+                color: Colors.white,
+                size: 38,
+              ),
+            ),
+
+            // URL label at bottom-left
+            Positioned(
+              bottom: 10,
+              left: 12,
+              right: 12,
+              child: Text(
+                url,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 11),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _VideoPlaceholder extends StatelessWidget {
+  final String url;
+  const _VideoPlaceholder({required this.url});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 200,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [NebulaTheme.surfaceHigh, NebulaTheme.surface],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.video_library_rounded,
+              color: NebulaTheme.primary, size: 48),
+          const SizedBox(height: 8),
+          Text('Nhấn để xem video',
+              style: TextStyle(
+                  color: NebulaTheme.textSubtle,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600)),
         ],
       ),
     );

@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
+import '../providers/message_provider.dart';
+import '../providers/post_provider.dart';
 import '../providers/settings_provider.dart';
+import '../services/socket_service.dart';
 import '../widgets/nebula_theme.dart';
 import '../widgets/create_post_sheet.dart';
 import 'admin_dashboard_screen.dart';
@@ -20,6 +23,24 @@ class NebulaShellScreen extends StatefulWidget {
 
 class _NebulaShellScreenState extends State<NebulaShellScreen> {
   int _tab = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Connect to Socket.io server, then register real-time listeners
+      // IMPORTANT: listeners must be registered AFTER the socket is created,
+      // otherwise socket.on() is called on a null socket and silently dropped.
+      SocketService.instance.connect().then((_) {
+        if (!mounted) return;
+        context.read<PostProvider>().initSocketListeners();
+        context.read<MessageProvider>().initSocketListeners();
+      }).catchError((err) {
+        // ignore: avoid_print
+        print('Shell: Socket connection error: $err');
+      });
+    });
+  }
 
   static const _titles = ['CluckTogether', 'CluckTogether', 'CluckTogether', 'CluckTogether'];
   List<Widget> get _pages => [

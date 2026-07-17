@@ -66,8 +66,8 @@ class SocketService {
     _socket?.on(event, handler);
   }
 
-  /// Remove a specific event listener.
-  void off(String event) {
-    _socket?.off(event);
+  /// Remove a specific event listener or all listeners for [event].
+  void off(String event, [dynamic Function(dynamic)? handler]) {
+    _socket?.off(event, handler);
   }
 }

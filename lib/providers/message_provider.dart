@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import '../models/message_model.dart';
+import '../models/community_message_model.dart';
 import '../services/api_client.dart';
 import '../services/socket_service.dart';
 
@@ -12,6 +13,7 @@ class MessageProvider extends ChangeNotifier {
 
   List<ConversationModel> _conversations = [];
   List<MessageModel> _messages = [];
+  List<CommunityMessageModel> _communityMessages = [];
   bool _isLoadingConversations = false;
   bool _isLoadingMessages = false;
   String? _error;
@@ -20,9 +22,16 @@ class MessageProvider extends ChangeNotifier {
   String? _activeChatUserId;
   bool _isOpponentTyping = false;
 
+  // Named handlers — stored so we can remove exactly our own, not others'
+  void Function(dynamic)? _hdlDirectMessage;
+  void Function(dynamic)? _hdlTypingStatus;
+  void Function(dynamic)? _hdlCommunityHistory;
+  void Function(dynamic)? _hdlCommunityMessage;
+
   // Getters
   List<ConversationModel> get conversations => _conversations;
   List<MessageModel> get messages => _messages;
+  List<CommunityMessageModel> get communityMessages => _communityMessages;
   bool get isLoadingConversations => _isLoadingConversations;
   bool get isLoadingMessages => _isLoadingMessages;
   String? get error => _error;
@@ -33,28 +42,59 @@ class MessageProvider extends ChangeNotifier {
   void initSocketListeners() {
     final socket = SocketService.instance;
 
-    socket.off('new_direct_message');
-    socket.off('typing_status');
+    // Remove only our own previous handlers
+    if (_hdlDirectMessage != null) socket.off('new_direct_message', _hdlDirectMessage);
+    if (_hdlTypingStatus != null) socket.off('typing_status', _hdlTypingStatus);
+    if (_hdlCommunityHistory != null) socket.off('community_history', _hdlCommunityHistory);
+    if (_hdlCommunityMessage != null) socket.off('new_community_message', _hdlCommunityMessage);
 
-    socket.on('new_direct_message', (data) {
-      final message = MessageModel.fromJson(Map<String, dynamic>.from(data as Map));
-      _handleIncomingMessage(message);
-    });
+    _hdlDirectMessage = (data) {
+      try {
+        final message = MessageModel.fromJson(Map<String, dynamic>.from(data as Map));
+        // Dedup: if this message id is already in the list, skip it
+        if (_messages.any((m) => m.id == message.id)) return;
+        _handleIncomingMessage(message);
+      } catch (_) {}
+    };
 
-    socket.on('typing_status', (data) {
+    _hdlTypingStatus = (data) {
       final senderId = data['senderId']?.toString();
       final isTyping = data['isTyping'] == true;
-
       if (senderId == _activeChatUserId) {
         _isOpponentTyping = isTyping;
         notifyListeners();
       }
-    });
+    };
+
+    _hdlCommunityHistory = (data) {
+      if (data is List) {
+        _communityMessages = data
+            .map((e) => CommunityMessageModel.fromJson(Map<String, dynamic>.from(e as Map)))
+            .toList();
+        notifyListeners();
+      }
+    };
+
+    _hdlCommunityMessage = (data) {
+      final message = CommunityMessageModel.fromJson(Map<String, dynamic>.from(data as Map));
+      // Dedup: ignore if we already have this message id
+      if (_communityMessages.any((m) => m.id == message.id)) return;
+      _communityMessages.add(message);
+      notifyListeners();
+    };
+
+    socket.on('new_direct_message', _hdlDirectMessage!);
+    socket.on('typing_status', _hdlTypingStatus!);
+    socket.on('community_history', _hdlCommunityHistory!);
+    socket.on('new_community_message', _hdlCommunityMessage!);
   }
 
   void disposeSocketListeners() {
-    SocketService.instance.off('new_direct_message');
-    SocketService.instance.off('typing_status');
+    final socket = SocketService.instance;
+    if (_hdlDirectMessage != null) socket.off('new_direct_message', _hdlDirectMessage);
+    if (_hdlTypingStatus != null) socket.off('typing_status', _hdlTypingStatus);
+    if (_hdlCommunityHistory != null) socket.off('community_history', _hdlCommunityHistory);
+    if (_hdlCommunityMessage != null) socket.off('new_community_message', _hdlCommunityMessage);
   }
 
   // Set the active user we are currently chatting with
@@ -163,6 +203,25 @@ class MessageProvider extends ChangeNotifier {
     SocketService.instance.emit('typing', {
       'receiverId': receiverId,
       'isTyping': isTyping,
+    });
+  }
+
+  // Emit join community channel
+  void joinCommunityChat() {
+    _communityMessages.clear();
+    SocketService.instance.emit('join_community');
+  }
+
+  // Emit leave community channel
+  void leaveCommunityChat() {
+    SocketService.instance.emit('leave_community');
+  }
+
+  // Emit community message
+  void sendCommunityMessage(String content) {
+    if (content.trim().isEmpty) return;
+    SocketService.instance.emit('send_community_message', {
+      'content': content.trim(),
     });
   }
 

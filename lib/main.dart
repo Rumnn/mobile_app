@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()..init()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()..init()),
-        ChangeNotifierProvider(create: (_) => PostProvider()),
+        ChangeNotifierProvider(create: (_) => PostProvider()..initSocketListeners()),
         ChangeNotifierProvider(create: (_) => MessageProvider()..initSocketListeners()),
       ],
       child: const _AppBuilder(),

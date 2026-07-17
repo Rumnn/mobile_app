@@ -1,11 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const path = require("path");
 
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const postRoutes = require("./routes/postRoutes");
+const uploadRoutes = require("./routes/uploadRoutes");
 const { errorHandler, notFoundHandler } = require("./middlewares/errorMiddleware");
 
 const http = require("http");
@@ -22,6 +24,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Serve uploaded files as static assets
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 app.get("/", (req, res) => {
   return res.status(200).json({
     success: true,
@@ -34,6 +39,7 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
 app.use("/messages", messageRoutes);
+app.use("/upload", uploadRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
@@ -53,6 +59,7 @@ const io = new Server(server, {
 
 // Start socket manager
 initSocketIO(io);
+app.set("io", io);
 
 server.listen(PORT, () => {
   // eslint-disable-next-line no-console

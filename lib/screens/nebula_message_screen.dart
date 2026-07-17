@@ -7,6 +7,7 @@ import '../providers/settings_provider.dart';
 import '../providers/user_provider.dart';
 import '../widgets/nebula_theme.dart';
 import 'chat_detail_screen.dart';
+import 'community_chat_screen.dart';
 
 class NebulaMessageScreen extends StatefulWidget {
   const NebulaMessageScreen({super.key});
@@ -105,6 +106,67 @@ class _NebulaMessageScreenState extends State<NebulaMessageScreen> {
                 ),
               ),
             ],
+          ),
+        ),
+
+        // Community Chat Banner
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          child: GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const CommunityChatScreen()),
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    NebulaTheme.primary.withOpacity(0.18),
+                    NebulaTheme.secondary.withOpacity(0.18),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: NebulaTheme.primary.withOpacity(0.3)),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: NebulaTheme.primary.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.groups_rounded, color: NebulaTheme.primary, size: 24),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Chat Cộng Đồng',
+                          style: TextStyle(
+                            color: NebulaTheme.text,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text(
+                          'Trò chuyện với tất cả mọi người',
+                          style: TextStyle(
+                            color: NebulaTheme.textSubtle,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.arrow_forward_ios_rounded,
+                      color: NebulaTheme.primary, size: 16),
+                ],
+              ),
+            ),
           ),
         ),
 

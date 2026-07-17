@@ -10,8 +10,8 @@ const getConversations = async (req, res) => {
       $or: [{ sender: currentUserId }, { receiver: currentUserId }],
     })
       .sort({ createdAt: -1 })
-      .populate("sender", "username avatarURL")
-      .populate("receiver", "username avatarURL");
+      .populate("sender", "_id username avatarURL")
+      .populate("receiver", "_id username avatarURL");
 
     const conversationsMap = {};
 
@@ -74,8 +74,8 @@ const getMessagesWithUser = async (req, res) => {
       ],
     })
       .sort({ createdAt: 1 })
-      .populate("sender", "username avatarURL")
-      .populate("receiver", "username avatarURL");
+      .populate("sender", "_id username avatarURL")
+      .populate("receiver", "_id username avatarURL");
 
     return res.status(200).json({
       success: true,
